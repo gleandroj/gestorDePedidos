@@ -9,7 +9,8 @@ class Order extends AbstractModel
 {
     protected $fillable = [
         'table',
-        'is_done'
+        'is_done',
+        'finalized_at'
     ];
 
     protected $casts = [
@@ -28,7 +29,8 @@ class Order extends AbstractModel
     public function scopeNotFinalized(Builder $builder)
     {
         return $builder->whereNull('finalized_at')
-            ->orWhereBetween('finalized_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()]);
+            ->orWhereBetween('finalized_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])
+            ->orderBy('created_at', 'asc');
     }
 
     public function items()

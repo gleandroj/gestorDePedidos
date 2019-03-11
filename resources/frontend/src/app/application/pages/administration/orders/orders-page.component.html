@@ -27,7 +27,7 @@
                 <span class="mat-subheader">Mesa {{ order.table }}</span>
             </mat-panel-title>
             <mat-panel-description style="align-items: center;">
-                {{ order.created_at | date:'medium' }} | {{ order.total_price | number: '1.2-2' }}R$
+                {{ order.created_at | date:'HH:mm:ss' }} | {{ order.total_price | number: '1.2-2' }}R$
                 <span style="flex: 1;"></span>
                 <button mat-icon-button class="push-10-r" (click)="edit(order, 'Editar Pedido', $event)">
                     <mat-icon>edit</mat-icon>

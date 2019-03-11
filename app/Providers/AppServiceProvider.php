@@ -2,6 +2,7 @@
 
 namespace Bufallus\Providers;
 
+use Illuminate\Support\Carbon;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,7 +14,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        Carbon::serializeUsing(function (Carbon $carbon) {
+            return $carbon->toIso8601String();
+        });
     }
 
     /**

@@ -26,7 +26,8 @@ export class OrdersPageComponent implements OnDestroy {
     private destroyed$ = new Subject();
 
     get filteredOrders() {
-        return this.orders.filter(o => this.showFinalized ? true : !o.is_done);
+        return this.orders
+            .filter(o => this.showFinalized ? true : !o.is_done);
     }
 
     public constructor(
@@ -44,10 +45,27 @@ export class OrdersPageComponent implements OnDestroy {
             .pipe(take(1))
             .subscribe(menus => this.menus = menus);
 
-        // interval(10000).pipe(
-        //     takeUntil(this.destroyed$),
-        //     switchMap(() => this.orderService.all())
-        // ).subscribe(orders => this.orders = orders);
+        interval(10000).pipe(
+            takeUntil(this.destroyed$),
+            switchMap(() => this.orderService.all())
+        ).subscribe(orders => {
+            orders.forEach(data => {
+                const order = this.orders.find(o => o.id === data.id);
+                if (order) {
+                    Object.assign(order, {
+                        is_done: data.is_done,
+                        table: data.table,
+                        created_at: data.created_at,
+                        total_price: data.total_price,
+                        finalized_at: data.finalized_at,
+                        id: data.id
+                    });
+                    order.items = [].concat(data.items);
+                } else {
+                    this.orders.push(order);
+                }
+            });
+        });
     }
 
     menuById(id: number) {

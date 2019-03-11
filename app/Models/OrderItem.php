@@ -13,7 +13,8 @@ class OrderItem extends AbstractModel
         'cost',
         'discount',
         'item_id',
-        'order_id'
+        'order_id',
+        'finalized_at'
     ];
 
     protected $casts = [

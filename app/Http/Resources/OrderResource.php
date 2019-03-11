@@ -19,6 +19,7 @@ class OrderResource extends JsonResource
             "created_at" => $this->created_at,
             "table" => $this->table,
             "finalized_at" => $this->finalized_at,
+            "is_done" => !!$this->finalized_at,
             "total_price" => $this->items->reduce(function ($total, $item) {
                 return $total + $item->computedPrice();
             }, 0),

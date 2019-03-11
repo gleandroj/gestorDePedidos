@@ -20,6 +20,7 @@ class OrderItemResource extends JsonResource
             "quantity" => $this->quantity,
             "created_at" => $this->created_at,
             "finalized_at" => $this->finalized_at,
+            "is_done" => !!$this->finalized_at,
             "price" => $this->price,
             "cost" => $this->cost,
             "discount" => $this->discount,

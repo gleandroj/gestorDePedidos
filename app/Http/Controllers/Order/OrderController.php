@@ -67,13 +67,13 @@ class OrderController extends Controller
     {
         $data = $request->except('items');
         $items = $request->get('items');
-        $isDone = $request->get('is_done');
+        $isDone = $request->get('is_done', false);
         if ($isDone) {
             $data['finalized_at'] = Carbon::now();
         } else {
             $data['finalized_at'] = null;
         }
-        $order->update($data);
+        $order->update(array_except($data, ['is_done']));
         foreach ($items as $item) {
             if (!empty($item['is_done']) && $item['is_done'] || $isDone) {
                 $item['finalized_at'] = Carbon::now();
@@ -82,7 +82,7 @@ class OrderController extends Controller
             }
             $order->items()->updateOrCreate([
                 'id' => $item['id'] ?? null
-            ], $item);
+            ], array_except($item, ['is_done']));
         }
         return new OrderResource($order->refresh());
     }
