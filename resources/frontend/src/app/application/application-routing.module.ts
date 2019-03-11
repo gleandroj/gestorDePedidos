@@ -7,15 +7,9 @@ import {
     UsersPageComponent,
     ForgetPasswordPageComponent,
     ResetPasswordPageComponent,
-    MenuPageComponent, OrdersPageComponent,
+    ItemsPageComponent, OrdersPageComponent,
 } from './pages';
 import { AuthGuard } from '../core/guards/auth-guard';
-
-const generateBreadTitleForEntity = (prefix, field) => {
-    return (params) => {
-        return `${params[field]} - ${prefix}`;
-    };
-};
 
 const routes: Routes = [
     {
@@ -73,7 +67,7 @@ const routes: Routes = [
                     },
                     {
                         path: 'cardapio',
-                        component: MenuPageComponent,
+                        component: ItemsPageComponent,
                         data: {
                             authorization: [
                                 'administrator'

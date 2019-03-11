@@ -7,8 +7,8 @@ import {ApiException} from '../../../support/interfaces/api-exception';
 import {OrderEntity} from '../../../core/entities/order-entity';
 import {OrderService} from '../../../core/services/order.service';
 import {Observable} from 'rxjs';
-import {MenuEntity} from '../../../core/entities/menu-entity';
-import {MenuService} from '../../../core/services';
+import {ItemEntity} from '../../../core/entities/item-entity';
+import {ItemService} from '../../../core/services';
 import {map, publishReplay, refCount} from 'rxjs/operators';
 import {OrderItemEntity} from '../../../core/entities/order-item-entity';
 
@@ -25,18 +25,18 @@ export class OrderFormDialogComponent {
     title = 'Formulário';
     form: FormGroup;
     order: OrderEntity;
-    menus: Observable<MenuEntity[]> = this.menuService.all().pipe(
+    menus: Observable<ItemEntity[]> = this.menuService.all().pipe(
         publishReplay(1),
         refCount(),
     );
     errors: {
         [key: string]: string[]
     } = {};
-    filteredOptions: { [key: number]: Observable<MenuEntity[]> } = {};
+    filteredOptions: { [key: number]: Observable<ItemEntity[]> } = {};
 
     constructor(
         public orderService: OrderService,
-        public menuService: MenuService,
+        public menuService: ItemService,
         public dialogRef: MatDialogRef<OrderFormDialogComponent>,
         public toastr: ToastService,
         @Inject(MAT_DIALOG_DATA) public data: any,
@@ -66,7 +66,7 @@ export class OrderFormDialogComponent {
         const item = event.target.value;
         this.filteredOptions[index] = this.menus.pipe(
             map(m => item ?
-                m.filter(_ => _.item.toLowerCase().indexOf(item) === 0)
+                m.filter(_ => _.description.toLowerCase().indexOf(item) === 0)
                 : m.slice()
             )
         );

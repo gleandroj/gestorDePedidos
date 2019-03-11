@@ -3,10 +3,10 @@ import {MatDialog} from '@angular/material';
 import {OrderEntity} from '../../../../core/entities/order-entity';
 import {Observable} from 'rxjs';
 import {OrderService} from '../../../../core/services/order.service';
-import {map, publishReplay, refCount, take} from 'rxjs/operators';
+import {map, refCount, take} from 'rxjs/operators';
 import {OrderFormDialogComponent} from '../../../dialogs';
-import {MenuService} from '../../../../core/services';
-import {MenuEntity} from '../../../../core/entities/menu-entity';
+import {ItemService} from '../../../../core/services';
+import {ItemEntity} from '../../../../core/entities/item-entity';
 
 @Component({
     selector: 'app-orders-page',
@@ -18,7 +18,7 @@ import {MenuEntity} from '../../../../core/entities/menu-entity';
 export class OrdersPageComponent {
 
     public orders: Observable<OrderEntity[]> = this.orderService.all();
-    public menus: MenuEntity[] = [];
+    public menus: ItemEntity[] = [];
     public loading = false;
 
     get filteredOrders() {
@@ -30,7 +30,7 @@ export class OrdersPageComponent {
 
     public constructor(
         private orderService: OrderService,
-        private menuService: MenuService,
+        private menuService: ItemService,
         private dialogService: MatDialog
     ) {
         this.menuService

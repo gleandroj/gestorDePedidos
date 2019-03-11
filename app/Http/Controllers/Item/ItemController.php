@@ -6,18 +6,18 @@
  * Time: 19:17
  */
 
-namespace Bufallus\Http\Controllers\Menu;
+namespace Bufallus\Http\Controllers\Item;
 
-use Bufallus\Http\Resources\MenuResource;
-use Bufallus\Models\Menu;
+use Bufallus\Http\Resources\ItemResource;
+use Bufallus\Models\Item;
 use Illuminate\Http\Request;
 use Bufallus\Http\Controllers\Controller;
 
 /**
- * Class MenuController
- * @package Bufallus\Http\Controllers\Menu
+ * Class ItemController
+ * @package Bufallus\Http\Controllers\Item
  */
-class MenuController extends Controller
+class ItemController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -26,8 +26,8 @@ class MenuController extends Controller
      */
     public function index()
     {
-        return MenuResource::collection(
-            Menu::paginate(
+        return ItemResource::collection(
+            Item::paginate(
                 request('per_page', 10),
                 request('order_by', 'id'),
                 request('direction', null),
@@ -40,51 +40,51 @@ class MenuController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response|MenuResource
+     * @return \Illuminate\Http\Response|ItemResource
      */
     public function store(Request $request)
     {
         $this->validate($request, [
-            'item' => 'string'
+            'description' => 'string'
         ]);
-        return new MenuResource(Menu::query()->create($request->only('item')));
+        return new ItemResource(Item::query()->create($request->only('description')));
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \Bufallus\Models\Menu $menu
-     * @return MenuResource|Menu
+     * @param  \Bufallus\Models\Item $menu
+     * @return ItemResource|Item
      */
-    public function show(Menu $menu)
+    public function show(Item $menu)
     {
-        return new MenuResource($menu);
+        return new ItemResource($menu);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request $request
-     * @param  \Bufallus\Models\Menu $menu
-     * @return \Illuminate\Http\Response|MenuResource|Menu
+     * @param  \Bufallus\Models\Item $menu
+     * @return \Illuminate\Http\Response|ItemResource|Item
      */
-    public function update(Request $request, Menu $menu)
+    public function update(Request $request, Item $menu)
     {
         $this->validate($request, [
-            'item' => 'string'
+            'description' => 'string'
         ]);
-        $menu->update($request->only('item'));
-        return new MenuResource($menu->refresh());
+        $menu->update($request->only('description'));
+        return new ItemResource($menu->refresh());
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \Bufallus\Models\Menu $menu
+     * @param  \Bufallus\Models\Item $menu
      * @return array
      * @throws \Exception
      */
-    public function destroy(Menu $menu)
+    public function destroy(Item $menu)
     {
         return [
             'success' => boolval($menu->delete())

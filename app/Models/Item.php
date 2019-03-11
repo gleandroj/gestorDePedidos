@@ -2,10 +2,10 @@
 
 namespace Bufallus\Models;
 
-class Menu extends AbstractModel
+class Item extends AbstractModel
 {
     protected $fillable = [
-        'item'
+        'description'
     ];
 
     /**
@@ -25,7 +25,7 @@ class Menu extends AbstractModel
 
         if ($filter && $filter != null) {
             $q->where(function ($builder) use ($filter) {
-                $builder->Orwhere('item', 'ilike', "%${filter}%");
+                $builder->Orwhere('description', 'ilike', "%${filter}%");
             });
         }
 

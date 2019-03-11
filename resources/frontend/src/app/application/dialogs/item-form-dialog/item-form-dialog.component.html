@@ -5,12 +5,12 @@
     <mat-card-content fxLayout="column">
         <div fxFlex="100" class="input-card">
             <mat-form-field class="full-width">
-                <input matInput placeholder="Item" formControlName="item" name="item" type="text" required>
-                <mat-error *ngIf="form.controls['item'].hasError('required')">
+                <input matInput placeholder="Item" formControlName="description" name="description" type="text" required>
+                <mat-error *ngIf="form.controls['description'].hasError('required')">
                     O campo item é <strong>obrigatório.</strong>
                 </mat-error>
-                <mat-hint *ngIf="hasError('item')" style="color: #f44336;">
-                    {{ getError('item') }}
+                <mat-hint *ngIf="hasError('description')" style="color: #f44336;">
+                    {{ getError('description') }}
                 </mat-hint>
             </mat-form-field>
         </div>

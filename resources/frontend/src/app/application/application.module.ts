@@ -11,7 +11,7 @@ import * as AppComponents from './components';
 import {MaskPipe} from 'ngx-mask';
 
 const PagesComponents = [
-    Pages.MenuPageComponent,
+    Pages.ItemsPageComponent,
     Pages.CorePageComponent,
     Pages.LoginPageComponent,
     Pages.RegisterPageComponent,
@@ -25,7 +25,7 @@ const PagesComponents = [
 const DialogComponents = [
     Dialogs.ConfirmDialogComponent,
     Dialogs.UserFormDialogComponent,
-    Dialogs.MenuFormDialogComponent,
+    Dialogs.ItemFormDialogComponent,
     Dialogs.OrderFormDialogComponent
 ];
 

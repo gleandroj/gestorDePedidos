@@ -44,6 +44,6 @@ Route::middleware(['auth:api'])->group(function () {
     Route::pattern('user', '[0-9]+');
     Route::apiResource('users', 'User\UserController', ['except' => ['destroy']]);
 
-    Route::pattern('menu', '[0-9]+');
-    Route::apiResource('menus', 'Menu\MenuController');
+    Route::pattern('items', '[0-9]+');
+    Route::apiResource('menus', 'Item\MenuController');
 });

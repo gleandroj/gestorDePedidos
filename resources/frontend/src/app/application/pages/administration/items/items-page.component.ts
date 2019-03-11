@@ -1,18 +1,18 @@
 import { Component } from '@angular/core';
-import { MenuService } from '../../../../core/services';
-import { MenuEntity} from '../../../../core/entities/menu-entity';
+import { ItemService } from '../../../../core/services';
+import { ItemEntity} from '../../../../core/entities/item-entity';
 import { MatDialog } from '@angular/material';
-import { MenuFormDialogComponent } from '../../../dialogs';
+import { ItemFormDialogComponent } from '../../../dialogs';
 import { AbstractTableComponent } from '../../../components';
 
 @Component({
-    selector: 'app-menu-page',
-    templateUrl: './menu-page.component.html',
+    selector: 'app-items-page',
+    templateUrl: './items-page.component.html',
     styleUrls: [
-        './menu-page.component.less'
+        './items-page.component.less'
     ],
 })
-export class MenuPageComponent extends AbstractTableComponent<MenuEntity> {
+export class ItemsPageComponent extends AbstractTableComponent<ItemEntity> {
 
     public displayedColumns: string[] = [
         'item',
@@ -20,14 +20,14 @@ export class MenuPageComponent extends AbstractTableComponent<MenuEntity> {
     ];
 
     public constructor(
-        private menuService: MenuService,
+        private itemService: ItemService,
         private dialogService: MatDialog
     ) {
         super();
     }
 
     public paginate(page?, perPage?, sortable?, filter?) {
-        return this.menuService.paginate(
+        return this.itemService.paginate(
             page,
             perPage,
             sortable,
@@ -35,19 +35,19 @@ export class MenuPageComponent extends AbstractTableComponent<MenuEntity> {
         );
     }
 
-    edit(menu?: MenuEntity, title?: string) {
+    edit(item?: ItemEntity, title?: string) {
         this.dialogService.open(
-            MenuFormDialogComponent,
+            ItemFormDialogComponent,
             {
                 data: {
-                    menu: menu,
+                    item: item,
                     title: title
                 },
                 panelClass: 'dialog-fullscreen'
             }
         ).afterClosed().subscribe((data) => {
-            if (data && menu) {
-                Object.assign(menu, data);
+            if (data && item) {
+                Object.assign(item, data);
             } else if (data) {
                 this.paginator.data = [data].concat(this.paginator.data);
             }

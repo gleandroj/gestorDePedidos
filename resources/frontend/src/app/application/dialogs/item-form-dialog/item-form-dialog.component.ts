@@ -1,48 +1,48 @@
 import {Component, Inject} from '@angular/core';
 import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import {FormBuilder, FormGroup} from '@angular/forms';
-import {MenuEntity} from '../../../core/entities/menu-entity';
-import {MenuService} from '../../../core/services';
+import {ItemEntity} from '../../../core/entities/item-entity';
+import {ItemService} from '../../../core/services';
 import {ToastService} from '../../../support/services';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ApiException} from '../../../support/interfaces/api-exception';
 
 @Component({
-    selector: 'app-menu-form-dialog',
-    templateUrl: './menu-form-dialog.component.html',
+    selector: 'app-item-form-dialog',
+    templateUrl: './item-form-dialog.component.html',
     styleUrls: [
-        './menu-form-dialog.component.less'
+        './item-form-dialog.component.less'
     ],
 })
-export class MenuFormDialogComponent {
+export class ItemFormDialogComponent {
     public loading = false;
     editMode = false;
     title = 'Formulário';
     form: FormGroup;
-    menu: MenuEntity;
+    item: ItemEntity;
     errors: {
         [key: string]: string[]
     } = {};
 
     constructor(
-        public menuService: MenuService,
-        public dialogRef: MatDialogRef<MenuFormDialogComponent>,
+        public itemService: ItemService,
+        public dialogRef: MatDialogRef<ItemFormDialogComponent>,
         public toastr: ToastService,
         @Inject(MAT_DIALOG_DATA) public data: any,
         fb: FormBuilder
     ) {
         this.title = data.title ? data.title : this.title;
-        this.menu = data.menu ? data.menu : {};
-        this.editMode = !!data.menu;
+        this.item = data.item ? data.item : {};
+        this.editMode = !!data.item;
         this.form = fb.group({
-            id: this.menu.id,
-            item: this.menu.item
+            id: this.item.id,
+            description: this.item.description
         });
     }
 
     save() {
         this.loading = true;
-        this.menuService.save(this.form.value).subscribe((menu) => {
+        this.itemService.save(this.form.value).subscribe((item) => {
             this.loading = false;
             if (this.editMode) {
                 this.toastr.open(
@@ -54,7 +54,7 @@ export class MenuFormDialogComponent {
                 );
             }
 
-            this.dialogRef.close(menu);
+            this.dialogRef.close(item);
         }, (response: HttpErrorResponse) => {
             this.loading = false;
             const error = response.error as ApiException<any>;
