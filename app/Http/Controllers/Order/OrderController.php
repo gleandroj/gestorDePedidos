@@ -96,6 +96,7 @@ class OrderController extends Controller
      */
     public function destroy(Order $order)
     {
+        $order->items()->delete();
         return [
             'success' => boolval($order->delete())
         ];

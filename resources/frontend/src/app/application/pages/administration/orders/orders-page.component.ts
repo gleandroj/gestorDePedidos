@@ -3,11 +3,12 @@ import {MatDialog} from '@angular/material';
 import {OrderEntity} from '../../../../core/entities/order-entity';
 import {OrderService} from '../../../../core/services/order.service';
 import {switchMap, take, takeUntil} from 'rxjs/operators';
-import {OrderFormDialogComponent} from '../../../dialogs';
+import {ConfirmDialogComponent, OrderFormDialogComponent} from '../../../dialogs';
 import {ItemService} from '../../../../core/services';
 import {ItemEntity} from '../../../../core/entities/item-entity';
-import {interval, Subject} from 'rxjs';
+import {EMPTY, interval, Subject} from 'rxjs';
 import {OrderItemEntity} from '../../../../core/entities/order-item-entity';
+import {ToastService} from '../../../../support/services';
 
 @Component({
     selector: 'app-orders-page',
@@ -32,7 +33,8 @@ export class OrdersPageComponent implements OnDestroy {
 
     public constructor(
         private orderService: OrderService,
-        private menuService: ItemService,
+        private itemService: ItemService,
+        private toastr: ToastService,
         private dialogService: MatDialog
     ) {
         this.orderService.all()
@@ -40,7 +42,7 @@ export class OrdersPageComponent implements OnDestroy {
                 take(1)
             )
             .subscribe(orders => this.orders = orders);
-        this.menuService
+        this.itemService
             .all()
             .pipe(take(1))
             .subscribe(menus => this.menus = menus);
@@ -121,5 +123,29 @@ export class OrdersPageComponent implements OnDestroy {
                 this.orders.push(data);
             }
         });
+    }
+
+    cancel(order: OrderEntity) {
+        this.dialogService.open(
+            ConfirmDialogComponent,
+            {
+                data: {
+                    message: 'Tem certeza que deseja cancelar?'
+                },
+                panelClass: 'dialog-fullscreen'
+            }
+        )
+            .afterClosed()
+            .pipe(
+                switchMap(
+                    (confirm) => confirm ? this.orderService.delete(order.id) : EMPTY
+                )
+            )
+            .subscribe((confirm) => {
+                if (confirm) {
+                    this.orders = this.orders.filter(o => o.id !== order.id);
+                    this.toastr.open('Pedido cancelado com sucesso!');
+                }
+            });
     }
 }

@@ -15,7 +15,7 @@
     </button>
 </div>
 <mat-accordion>
-    <mat-expansion-panel [expanded]="i === 0 && !order.is_done"
+    <mat-expansion-panel hideToggle [expanded]="i === 0 && !order.is_done"
                          *ngFor="let order of filteredOrders; let i = index;">
         <mat-expansion-panel-header [ngClass]="{'is-done': order.is_done}"
                                     style="padding: 0 10px; align-items: center;">
@@ -29,9 +29,17 @@
             <mat-panel-description style="align-items: center;">
                 {{ order.created_at | date:'HH:mm:ss' }} | {{ order.total_price | number: '1.2-2' }}R$
                 <span style="flex: 1;"></span>
-                <button mat-icon-button class="push-10-r" (click)="edit(order, 'Editar Pedido', $event)">
+                <button mat-icon-button (click)="edit(order, 'Editar Pedido', $event)">
                     <mat-icon>edit</mat-icon>
                 </button>
+                <button mat-icon-button [matMenuTriggerFor]="cancelMenu" (click)="$event.stopPropagation()">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #cancelMenu="matMenu">
+                    <button mat-menu-item (click)="cancel(order)">
+                        Cancelar pedido
+                    </button>
+                </mat-menu>
             </mat-panel-description>
         </mat-expansion-panel-header>
         <mat-action-list class="order-items">
@@ -47,7 +55,6 @@
                 <span mat-list-icon class="push-5-r"> {{ item.quantity }}x </span>
                 <h4 mat-line>{{ menuById(item.item_id)?.description }}</h4>
                 <p mat-line> Obs: {{item.observation}} </p>
-
                 <span class="push-10-r mat-list-icon"
                       style="width: auto; white-space: nowrap;"> {{ (item.price || 0) - (item.discount || 0) | number: '1.2-2' }}
                     R$ </span>
