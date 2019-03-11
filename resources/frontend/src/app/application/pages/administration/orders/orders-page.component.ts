@@ -1,9 +1,8 @@
 import {Component} from '@angular/core';
 import {MatDialog} from '@angular/material';
 import {OrderEntity} from '../../../../core/entities/order-entity';
-import {Observable} from 'rxjs';
 import {OrderService} from '../../../../core/services/order.service';
-import {map, take} from 'rxjs/operators';
+import {take} from 'rxjs/operators';
 import {OrderFormDialogComponent} from '../../../dialogs';
 import {ItemService} from '../../../../core/services';
 import {ItemEntity} from '../../../../core/entities/item-entity';
