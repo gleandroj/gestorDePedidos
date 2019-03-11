@@ -2,6 +2,7 @@
 
 namespace Bufallus\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 
 class Order extends AbstractModel
@@ -15,13 +16,19 @@ class Order extends AbstractModel
         'is_done' => 'boolean'
     ];
 
+    protected $dates = [
+        'finalized_at',
+        'created_at'
+    ];
+
     /**
      * @param Builder $builder
      * @return Builder
      */
     public function scopeNotFinalized(Builder $builder)
     {
-        return $builder->where('is_done', false);
+        return $builder->whereNull('finalized_at')
+            ->orWhereBetween('finalized_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()]);
     }
 
     public function items()

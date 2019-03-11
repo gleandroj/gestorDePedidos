@@ -1,4 +1,4 @@
-import {Component, Inject} from '@angular/core';
+import {ChangeDetectorRef, Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ToastService} from '../../../support/services';
@@ -6,11 +6,11 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {ApiException} from '../../../support/interfaces/api-exception';
 import {OrderEntity} from '../../../core/entities/order-entity';
 import {OrderService} from '../../../core/services/order.service';
-import {Observable} from 'rxjs';
 import {ItemEntity} from '../../../core/entities/item-entity';
 import {ItemService} from '../../../core/services';
-import {map, publishReplay, refCount} from 'rxjs/operators';
 import {OrderItemEntity} from '../../../core/entities/order-item-entity';
+import {distinctUntilChanged, takeUntil} from 'rxjs/operators';
+import {Subject} from 'rxjs';
 
 @Component({
     selector: 'app-order-form-dialog',
@@ -19,26 +19,39 @@ import {OrderItemEntity} from '../../../core/entities/order-item-entity';
         './order-form-dialog.component.less'
     ],
 })
-export class OrderFormDialogComponent {
-    public loading = false;
+export class OrderFormDialogComponent implements OnDestroy {
+    _loading = false;
     editMode = false;
     title = 'Formulário';
     form: FormGroup;
     order: OrderEntity;
-    menus: Observable<ItemEntity[]> = this.menuService.all().pipe(
-        publishReplay(1),
-        refCount(),
-    );
+    allItems: ItemEntity[] = [];
     errors: {
         [key: string]: string[]
     } = {};
-    filteredOptions: { [key: number]: Observable<ItemEntity[]> } = {};
+    filteredOptions: { [key: number]: ItemEntity[] } = {};
+    private $destroyed = new Subject();
+
+    get loading() {
+        return this._loading;
+    }
+
+    set loading(isLoading) {
+        if (isLoading) {
+            this.form.disable();
+        } else {
+            this.form.enable();
+        }
+
+        this._loading = isLoading;
+    }
 
     constructor(
         public orderService: OrderService,
         public menuService: ItemService,
         public dialogRef: MatDialogRef<OrderFormDialogComponent>,
         public toastr: ToastService,
+        public changeRef: ChangeDetectorRef,
         @Inject(MAT_DIALOG_DATA) public data: any,
         private fb: FormBuilder
     ) {
@@ -53,36 +66,74 @@ export class OrderFormDialogComponent {
                 [Validators.required]
             )
         });
-        if (this.order.items) {
-            this.order.items.forEach((i) => this.addItem(i));
-        }
+        this.loading = true;
+        this.menuService.all().subscribe(items => {
+            this.allItems = items;
+            if (this.order.items) {
+                this.order.items.forEach((i) => this.addItem(i));
+            }
+            this.loading = false;
+        });
     }
 
     get items() {
         return this.form.get('items') as FormArray;
     }
 
+    get totalComputedPrice() {
+        return this.items.value.reduce((total, value) => {
+            const currValue = value as OrderItemEntity;
+            return total += ((currValue.price ? currValue.price : 0) - (currValue.discount ? currValue.discount : 0));
+        }, 0);
+    }
+
     filter(event: any, index: number) {
         const item = event.target.value;
-        this.filteredOptions[index] = this.menus.pipe(
-            map(m => item ?
-                m.filter(_ => _.description.toLowerCase().indexOf(item) === 0)
-                : m.slice()
-            )
-        );
+        this.filteredOptions[index] = item ?
+            this.allItems.filter(_ => _.description.toLowerCase().indexOf(item) === 0)
+            : this.allItems.slice();
     }
 
     buildItem(item?: OrderItemEntity) {
         return this.fb.group({
+            id: [item ? item.id : null],
             quantity: [item ? item.quantity : 1, Validators.required],
+            price: [item ? item.price : 0, Validators.required],
+            cost: [item ? item.cost : 0, Validators.required],
+            discount: [item ? item.discount : 0],
             item_id: [item ? item.item_id : null, Validators.required],
             observation: item ? item.observation : ''
         });
     }
 
+    computePrice(value, itemControl: FormGroup) {
+        const itemValue = this.allItems.find(i => i.id === value.item_id);
+        if (itemValue) {
+            const computedPrice = value.quantity * itemValue.price;
+            itemControl.patchValue({
+                price: computedPrice,
+                cost: value.quantity * itemValue.cost,
+                discount: value.discount > computedPrice ? itemValue.price : value.discount,
+            }, {onlySelf: false, emitEvent: false});
+        } else {
+            itemControl.patchValue({
+                price: 0,
+                cost: 0,
+            }, {onlySelf: false, emitEvent: false});
+        }
+    }
+
     addItem(item?: OrderItemEntity) {
-        this.items.insert(0, this.buildItem(item));
-        this.filteredOptions[this.items.length - 1] = this.menus;
+        const itemControl = this.buildItem(item);
+        this.filteredOptions[this.items.length] = this.allItems.slice();
+        this.items.insert(0, itemControl);
+        itemControl
+            .valueChanges
+            .pipe(
+                takeUntil(this.$destroyed),
+                distinctUntilChanged()
+            )
+            .subscribe((value) => this.computePrice(value, itemControl));
     }
 
     save() {
@@ -109,6 +160,11 @@ export class OrderFormDialogComponent {
                 this.form.updateValueAndValidity();
             }
         });
+    }
+
+    ngOnDestroy(): void {
+        this.$destroyed.next();
+        this.$destroyed.complete();
     }
 
     cancel() {

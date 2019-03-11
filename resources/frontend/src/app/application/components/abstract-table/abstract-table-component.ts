@@ -2,6 +2,8 @@ import {PaginatorData} from '../../../support/interfaces';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {OnInit} from '@angular/core';
 import {debounceTime, distinctUntilChanged, tap} from 'rxjs/operators';
+import {MatDialog} from '@angular/material';
+import {ConfirmDialogComponent} from '../../dialogs';
 
 export abstract class AbstractTableComponent<T> implements OnInit {
 
@@ -14,6 +16,7 @@ export abstract class AbstractTableComponent<T> implements OnInit {
         },
         data: []
     };
+
     public get filter() {
         return {
             query: this.searchSubject.getValue()
@@ -28,7 +31,23 @@ export abstract class AbstractTableComponent<T> implements OnInit {
 
     public sortable: { key: string; direction: 'asc' | 'desc' } = null;
 
+    public constructor(protected dialogService: MatDialog) {
+    }
+
+
     public abstract paginate(page?, perPage?, sortable?, filter?): Observable<PaginatorData<T>>;
+
+    public confirm(message?: string) {
+        return this.dialogService.open(
+            ConfirmDialogComponent,
+            {
+                data: {
+                    message: message
+                },
+                panelClass: 'dialog-fullscreen'
+            }
+        ).afterClosed();
+    }
 
     public processPaginate(page?, perPage?, sortable?, filter?) {
         this.loading = true;

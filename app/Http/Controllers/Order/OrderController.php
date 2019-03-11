@@ -12,6 +12,7 @@ use Bufallus\Http\Requests\CreateOrUpdateOrderRequest;
 use Bufallus\Http\Resources\OrderResource;
 use Bufallus\Models\Order;
 use Bufallus\Http\Controllers\Controller;
+use Illuminate\Support\Carbon;
 
 /**
  * Class OrderController
@@ -64,7 +65,25 @@ class OrderController extends Controller
      */
     public function update(CreateOrUpdateOrderRequest $request, Order $order)
     {
-        $order->update($request->validated());
+        $data = $request->except('items');
+        $items = $request->get('items');
+        $isDone = $request->get('is_done');
+        if ($isDone) {
+            $data['finalized_at'] = Carbon::now();
+        } else {
+            $data['finalized_at'] = null;
+        }
+        $order->update($data);
+        foreach ($items as $item) {
+            if (!empty($item['is_done']) && $item['is_done'] || $isDone) {
+                $item['finalized_at'] = Carbon::now();
+            } else {
+                $item['finalized_at'] = null;
+            }
+            $order->items()->updateOrCreate([
+                'id' => $item['id'] ?? null
+            ], $item);
+        }
         return new OrderResource($order->refresh());
     }
 

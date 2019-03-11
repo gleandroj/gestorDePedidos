@@ -4,7 +4,7 @@
     <span class="white-space" *ngIf="!loading"></span>
     <mat-card-content fxLayout="column">
         <div fxFlex="100" class="input-card">
-            <mat-form-field class="full-width">
+            <mat-form-field style="width: calc(100% - 120px); margin-right: 20px;">
                 <input matInput placeholder="Mesa" formControlName="table" name="table" type="text" required>
                 <mat-error *ngIf="form.controls['table'].hasError('required')">
                     O campo mesa é <strong>obrigatório.</strong>
@@ -12,6 +12,12 @@
                 <mat-hint *ngIf="hasError('table')" style="color: #f44336;">
                     {{ getError('table') }}
                 </mat-hint>
+            </mat-form-field>
+            <mat-form-field style="width: 100px">
+                <input matInput placeholder="Valor Total" type="text"
+                       [disabled]="true"
+                       [value]="totalComputedPrice | number: '1.2-2'">
+                <span matSuffix>R$</span>
             </mat-form-field>
         </div>
         <div style="margin-bottom: 45px; position: relative;">
@@ -37,21 +43,37 @@
                         <mat-select formControlName="item_id" required placeholder="Selecione o item">
                             <mat-option>
                                 <ngx-mat-select-search (input)="filter($event, i)"
-                                                       noEntriesFoundLabel="Nenhum item disponível"
-                                                       [clearSearchInput]="true"
-                                                       placeholderLabel="">
+                                                       [noEntriesFoundLabel]="'Nenhum item disponível'"
+                                                       placeholderLabel="Selecione o item">
                                     <mat-icon ngxMatSelectSearchClear (click)="filter({target: {value: ''}}, i)">
                                         close
                                     </mat-icon>
                                 </ngx-mat-select-search>
                             </mat-option>
-                            <mat-option *ngFor="let item of filteredOptions[i] | async" [value]="item.id">
-                                {{ item.description }}
+                            <mat-option *ngFor="let item of filteredOptions[i]" [value]="item.id">
+                                {{ item.description }} - {{ item.price | number:'1.2-2' }}R$
+                            </mat-option>
+                            <mat-option [disabled]="true" *ngIf="filteredOptions[i]?.length === 0" [value]="null">
+                                Nenhum item disponível
                             </mat-option>
                         </mat-select>
                         <mat-error *ngIf="control.get('item_id').hasError('required')">
                             O campo item é <strong>obrigatório.</strong>
                         </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <div fxFlex="100" class="input-card">
+                    <mat-form-field style="width: calc(50% - 10px); margin-right: 20px">
+                        <input matInput placeholder="Desconto" formControlName="discount" type="number" min="0">
+                        <span matSuffix>R$</span>
+                    </mat-form-field>
+                    <mat-form-field style="width: calc(50% - 10px); ">
+                        <input matInput placeholder="Valor" type="text"
+                               [disabled]="true"
+                               [value]="(control.get('price')?.value - control.get('discount')?.value) | number: '1.2-2'"
+                               min="0">
+                        <span matSuffix>R$</span>
                     </mat-form-field>
                 </div>
                 <div fxFlex="100" class="input-card">

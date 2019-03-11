@@ -1,6 +1,6 @@
 import {Component, Inject} from '@angular/core';
 import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ItemEntity} from '../../../core/entities/item-entity';
 import {ItemService} from '../../../core/services';
 import {ToastService} from '../../../support/services';
@@ -36,7 +36,9 @@ export class ItemFormDialogComponent {
         this.editMode = !!data.item;
         this.form = fb.group({
             id: this.item.id,
-            description: this.item.description
+            description: [this.item.description, Validators.required],
+            price: [this.item.price, Validators.required],
+            cost: [this.item.cost, Validators.required]
         });
     }
 

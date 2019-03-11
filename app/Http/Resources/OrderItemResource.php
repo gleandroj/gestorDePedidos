@@ -18,8 +18,12 @@ class OrderItemResource extends JsonResource
             "id" => $this->id,
             "item_id" => $this->item_id,
             "quantity" => $this->quantity,
-            "observation" => $this->observation,
-            "is_done" => $this->is_done
+            "created_at" => $this->created_at,
+            "finalized_at" => $this->finalized_at,
+            "price" => $this->price,
+            "cost" => $this->cost,
+            "discount" => $this->discount,
+            "observation" => $this->observation
         ];
     }
 }

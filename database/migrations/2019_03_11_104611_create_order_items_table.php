@@ -17,11 +17,14 @@ class CreateOrderItemsTable extends Migration
             $table->increments('id');
             $table->string('observation')->nullable();
             $table->integer('quantity')->default(1);
+            $table->integer('price');
+            $table->integer('cost');
+            $table->integer('discount');
             $table->unsignedInteger('order_id');
             $table->foreign('order_id')->references('id')->on('orders');
             $table->unsignedInteger('item_id');
             $table->foreign('item_id')->references('id')->on('items');
-            $table->boolean('is_done')->default(false);
+            $table->dateTime('finalized_at')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

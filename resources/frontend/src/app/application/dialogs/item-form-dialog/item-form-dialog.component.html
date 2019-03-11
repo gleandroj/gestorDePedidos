@@ -14,6 +14,34 @@
                     {{ getError('description') }}
                 </mat-hint>
             </mat-form-field>
+
+            <mat-form-field class="full-width">
+                <input matInput placeholder="Preço de venda" formControlName="price" name="price"
+                       type="number"
+                       min="0"
+                       required>
+                <span matSuffix>R$</span>
+                <mat-error *ngIf="form.controls['price'].hasError('required')">
+                    O campo preço de venda é <strong>obrigatório.</strong>
+                </mat-error>
+                <mat-hint *ngIf="hasError('price')" style="color: #f44336;">
+                    {{ getError('price') }}
+                </mat-hint>
+            </mat-form-field>
+
+            <mat-form-field class="full-width">
+                <input matInput placeholder="Custo" formControlName="cost" name="cost"
+                       type="number"
+                       min="0"
+                       required>
+                <span matSuffix>R$</span>
+                <mat-error *ngIf="form.controls['cost'].hasError('required')">
+                    O campo custo é <strong>obrigatório.</strong>
+                </mat-error>
+                <mat-hint *ngIf="hasError('cost')" style="color: #f44336;">
+                    {{ getError('cost') }}
+                </mat-hint>
+            </mat-form-field>
         </div>
     </mat-card-content>
 </mat-dialog-content>

@@ -20,13 +20,24 @@
                 <th mat-header-cell mat-sort-header="description" *matHeaderCellDef> Item</th>
                 <td mat-cell *matCellDef="let element"> {{element.description}}</td>
             </ng-container>
+            <ng-container matColumnDef="price">
+                <th mat-header-cell mat-sort-header="price" *matHeaderCellDef> Preço</th>
+                <td mat-cell *matCellDef="let element"> {{element.price | number:'1.2-2'}}R$</td>
+            </ng-container>
+            <ng-container matColumnDef="cost">
+                <th mat-header-cell mat-sort-header="cost" *matHeaderCellDef> Custo</th>
+                <td mat-cell *matCellDef="let element"> {{element.cost | number:'1.2-2'}}R$</td>
+            </ng-container>
             <ng-container matColumnDef="actions">
                 <th mat-header-cell *matHeaderCellDef style="width: 5%;padding: 0 5px !important;">
                     Ações
                 </th>
                 <td mat-cell *matCellDef="let element" style="width: 10%;padding: 0 5px !important;">
-                    <button (click)="edit(element, 'Editar Usuário')" mat-icon-button matTooltip="Editar">
+                    <button (click)="edit(element, 'Editar Item')" mat-icon-button matTooltip="Editar">
                         <mat-icon>edit</mat-icon>
+                    </button>
+                    <button (click)="delete(element)" mat-icon-button matTooltip="Deletar">
+                        <mat-icon>delete</mat-icon>
                     </button>
                 </td>
             </ng-container>

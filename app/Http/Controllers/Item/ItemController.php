@@ -8,6 +8,7 @@
 
 namespace Bufallus\Http\Controllers\Item;
 
+use Bufallus\Http\Requests\CreateOrUpdateItemRequest;
 use Bufallus\Http\Resources\ItemResource;
 use Bufallus\Models\Item;
 use Illuminate\Http\Request;
@@ -39,15 +40,12 @@ class ItemController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param CreateOrUpdateItemRequest $request
      * @return \Illuminate\Http\Response|ItemResource
      */
-    public function store(Request $request)
+    public function store(CreateOrUpdateItemRequest $request)
     {
-        $this->validate($request, [
-            'description' => 'string'
-        ]);
-        return new ItemResource(Item::query()->create($request->only('description')));
+        return new ItemResource(Item::query()->create($request->validated()));
     }
 
     /**
@@ -64,16 +62,13 @@ class ItemController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param CreateOrUpdateItemRequest $request
      * @param  \Bufallus\Models\Item $item
      * @return \Illuminate\Http\Response|ItemResource|Item
      */
-    public function update(Request $request, Item $item)
+    public function update(CreateOrUpdateItemRequest $request, Item $item)
     {
-        $this->validate($request, [
-            'description' => 'string'
-        ]);
-        $item->update($request->only('description'));
+        $item->update($request->validated());
         return new ItemResource($item->refresh());
     }
 

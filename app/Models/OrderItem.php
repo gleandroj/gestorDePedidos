@@ -8,6 +8,10 @@ class OrderItem extends AbstractModel
     protected $fillable = [
         'observation',
         'is_done',
+        'quantity',
+        'price',
+        'cost',
+        'discount',
         'item_id',
         'order_id'
     ];
@@ -15,6 +19,15 @@ class OrderItem extends AbstractModel
     protected $casts = [
         'is_done' => 'boolean'
     ];
+
+    protected $dates = [
+        'finalized_at'
+    ];
+
+    public function computedPrice()
+    {
+        return $this->price - $this->discount;
+    }
 
     protected function order()
     {

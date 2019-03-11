@@ -16,9 +16,12 @@ class OrderResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            "created_at" => $this->created_at->toIso8601String(),
+            "created_at" => $this->created_at,
             "table" => $this->table,
-            "is_done" => $this->is_done,
+            "finalized_at" => $this->finalized_at,
+            "total_price" => $this->items->reduce(function ($total, $item) {
+                return $total + $item->computedPrice();
+            }, 0),
             "items" => OrderItemResource::collection($this->items)
         ];
     }

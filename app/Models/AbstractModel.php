@@ -15,6 +15,9 @@ class AbstractModel extends Model
 {
     use SoftDeletes;
 
+    CONST DATE_FORMAT = 'Y-m-d H:i:s';
+    protected $dateFormat = self::DATE_FORMAT;
+
     /**
      * @param \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder $query
      * @param $as

@@ -5,7 +5,14 @@ namespace Bufallus\Models;
 class Item extends AbstractModel
 {
     protected $fillable = [
-        'description'
+        'description',
+        'price',
+        'cost'
+    ];
+
+    protected $casts = [
+        'price' => 'double',
+        'cost' => 'double'
     ];
 
     /**

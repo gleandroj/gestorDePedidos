@@ -32,9 +32,9 @@ export class UsersPageComponent extends AbstractTableComponent<UserEntity> {
 
     public constructor(
         private userService: UserService,
-        private dialogService: MatDialog
+        dialogService: MatDialog
     ) {
-        super();
+        super(dialogService);
     }
 
     public paginate(page?, perPage?, sortable?, filter?) {
