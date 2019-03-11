@@ -56,7 +56,7 @@ export class OrdersPageComponent {
         }
     }
 
-    edit(order?: OrderEntity, title?: string, event?: Event) {
+    edit(order?: OrderEntity | any, title?: string, event?: Event) {
         if (event) {
             event.stopPropagation();
         }

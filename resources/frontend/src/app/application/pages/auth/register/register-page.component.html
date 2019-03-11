@@ -157,17 +157,6 @@
                 </mat-form-field>
             </div>
 
-            <div fxFlex="100" fxLayout="row" fxLayoutWrap="wrap" class="input-card push-10">
-                <div>
-                    <h3>Vínculo:</h3>
-                    <mat-radio-group formControlName="type">
-                        <mat-radio-button *ngFor="let vinculo of vinculos" [value]="vinculo.value">
-                            {{vinculo.label}}
-                        </mat-radio-button>
-                    </mat-radio-group>
-                </div>
-            </div>
-
             <div fxFlex="100" class="input-card"
                  [hidden]="this.signupForm.controls['type'].value == 2">
                 <mat-form-field class="full-width">
