@@ -39,7 +39,7 @@
 
             <mat-list-item class="order-item mat-typography" *ngFor="let item of orderItems(order.items)"
                            (click)="item.is_done = !item.is_done"
-                           [ngClass]="{'is-done': order.is_done}">
+                           [ngClass]="{'is-done': item.is_done}">
                 <span mat-list-icon class="push-5-r"> {{ item.quantity }}x </span>
                 <h4 mat-line>{{ menuById(item.item_id)?.description }}</h4>
                 <p mat-line> Obs: {{item.observation}} </p>
