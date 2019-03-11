@@ -5,17 +5,6 @@ use Illuminate\Support\Facades\Route;
 use Bufallus\Models\ProgrammingFeedback;
 use Bufallus\Models\UserCheckIn;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
-
 /**
  * Public Api
  */
@@ -44,6 +33,9 @@ Route::middleware(['auth:api'])->group(function () {
     Route::pattern('user', '[0-9]+');
     Route::apiResource('users', 'User\UserController', ['except' => ['destroy']]);
 
-    Route::pattern('items', '[0-9]+');
-    Route::apiResource('items', 'Item\MenuController');
+    Route::pattern('item', '[0-9]+');
+    Route::apiResource('items', 'Item\ItemController');
+
+    Route::pattern('order', '[0-9]+');
+    Route::apiResource('orders', 'Order\OrderController');
 });

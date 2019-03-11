@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import {NgModule} from '@angular/core';
+import {Routes, RouterModule} from '@angular/router';
 import {
     CorePageComponent,
     LoginPageComponent,
@@ -9,7 +9,7 @@ import {
     ResetPasswordPageComponent,
     ItemsPageComponent, OrdersPageComponent,
 } from './pages';
-import { AuthGuard } from '../core/guards/auth-guard';
+import {AuthGuard} from '../core/guards/auth-guard';
 
 const routes: Routes = [
     {
@@ -45,12 +45,12 @@ const routes: Routes = [
         path: 'bufallus',
         component: CorePageComponent,
         canActivateChild: [AuthGuard],
-        data: { breadcrumb: 'Bufallus' },
+        data: {breadcrumb: 'Bufallus'},
         children: [
             {
                 path: '',
                 pathMatch: 'full',
-                redirectTo: 'administrar/usuarios'
+                redirectTo: 'administrar/pedidos'
             },
             {
                 path: 'administrar',

@@ -7,7 +7,7 @@ import { MatSidenav, MatDialog } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatIconRegistry } from '@angular/material';
 import { AuthEntity } from '../../../core/entities/auth-entity';
-import { menus as MENUS } from './menus';
+import { menus as MENUS } from '../../menus';
 import { BreadcrumbService, ToastService } from '../../../support/services';
 
 @Component({

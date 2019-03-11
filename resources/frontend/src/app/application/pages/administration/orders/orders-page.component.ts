@@ -3,7 +3,7 @@ import {MatDialog} from '@angular/material';
 import {OrderEntity} from '../../../../core/entities/order-entity';
 import {Observable} from 'rxjs';
 import {OrderService} from '../../../../core/services/order.service';
-import {map, refCount, take} from 'rxjs/operators';
+import {map, take} from 'rxjs/operators';
 import {OrderFormDialogComponent} from '../../../dialogs';
 import {ItemService} from '../../../../core/services';
 import {ItemEntity} from '../../../../core/entities/item-entity';
@@ -17,15 +17,13 @@ import {ItemEntity} from '../../../../core/entities/item-entity';
 })
 export class OrdersPageComponent {
 
-    public orders: Observable<OrderEntity[]> = this.orderService.all();
+    public orders: OrderEntity[] = [];
     public menus: ItemEntity[] = [];
     public loading = false;
+    public showFinalized: boolean;
 
     get filteredOrders() {
-        return this.orders.pipe(
-            map(os => os.filter(o => !o.is_done)),
-            refCount()
-        );
+        return this.orders.filter(o => this.showFinalized ? true : !o.is_done);
     }
 
     public constructor(
@@ -33,6 +31,11 @@ export class OrdersPageComponent {
         private menuService: ItemService,
         private dialogService: MatDialog
     ) {
+        this.orderService.all()
+            .pipe(
+                take(1)
+            )
+            .subscribe(orders => this.orders = orders);
         this.menuService
             .all()
             .pipe(take(1))
@@ -70,7 +73,7 @@ export class OrdersPageComponent {
             if (data && order) {
                 Object.assign(order, data);
             } else if (data) {
-
+                this.orders.push(data);
             }
         });
     }

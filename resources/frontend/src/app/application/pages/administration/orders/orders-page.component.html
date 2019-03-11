@@ -1,12 +1,24 @@
+<div class="mat-more-fab-buttom">
+    <button mat-icon-button style="color: white;" [matMenuTriggerFor]="appMenu">
+        <mat-icon>filter_list</mat-icon>
+    </button>
+</div>
+<mat-menu #appMenu="matMenu">
+    <button mat-menu-item (click)="showFinalized = !showFinalized">
+        <mat-checkbox [(ngModel)]="showFinalized"></mat-checkbox>
+        Mostrar Finalizados
+    </button>
+</mat-menu>
 <div class="mat-toolbar-fab-buttom">
-    <button mat-fab color="accent">
-        <mat-icon (click)="edit({}, 'Cadastrar Pedido')">add</mat-icon>
+    <button mat-fab color="accent" (click)="edit({}, 'Cadastrar Pedido')">
+        <mat-icon>add</mat-icon>
     </button>
 </div>
 <mat-accordion>
-    <mat-expansion-panel [expanded]="i === 0" hideToggle
-                         *ngFor="let order of (filteredOrders | async); let i = index;">
-        <mat-expansion-panel-header style="padding: 0 10px; align-items: center;">
+    <mat-expansion-panel [expanded]="i === 0 && !order.is_done"
+                         *ngFor="let order of filteredOrders; let i = index;">
+        <mat-expansion-panel-header [ngClass]="{'is-done': order.is_done}"
+                                    style="padding: 0 10px; align-items: center;">
             <mat-panel-title style="align-items: center;">
                 <mat-checkbox class="push-15-r push-15-l"
                               [(ngModel)]="order.is_done" (ngModelChange)="markAsDone($event, order)"
@@ -15,9 +27,9 @@
                 <span class="mat-subheader">Mesa {{ order.table }}</span>
             </mat-panel-title>
             <mat-panel-description style="align-items: center;">
-                {{ order.ordered_at | date:'medium' }}
+                {{ order.created_at | date:'medium' }}
                 <span style="flex: 1;"></span>
-                <button mat-icon-button (click)="edit(order, 'Editar Pedido', $event)">
+                <button mat-icon-button class="push-10-r" (click)="edit(order, 'Editar Pedido', $event)">
                     <mat-icon>edit</mat-icon>
                 </button>
             </mat-panel-description>
@@ -26,19 +38,19 @@
             <h3 mat-subheader style="width: 100%;">Itens</h3>
 
             <mat-list-item class="order-item mat-typography" *ngFor="let item of orderItems(order.items)"
-                           (click)="item.is_done = !item.is_done">
+                           (click)="item.is_done = !item.is_done"
+                           [ngClass]="{'is-done': order.is_done}">
                 <span mat-list-icon class="push-5-r"> {{ item.quantity }}x </span>
-                <h4 mat-line>{{ menuById(item.item_id)?.item }}</h4>
+                <h4 mat-line>{{ menuById(item.item_id)?.description }}</h4>
                 <p mat-line> Obs: {{item.observation}} </p>
                 <mat-checkbox [(ngModel)]="item.is_done"></mat-checkbox>
             </mat-list-item>
 
         </mat-action-list>
     </mat-expansion-panel>
-
 </mat-accordion>
 
-<ng-container *ngIf="!loading && ((filteredOrders | async)?.length === 0)">
+<ng-container *ngIf="!loading && (filteredOrders?.length === 0)">
     <div class="mat-typography" style="text-align: center;">
         <h2 style="color: rgba(0, 0, 0, .4)">Ainda não há pedidos</h2>
     </div>

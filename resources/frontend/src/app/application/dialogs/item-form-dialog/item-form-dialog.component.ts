@@ -44,7 +44,7 @@ export class ItemFormDialogComponent {
         this.loading = true;
         this.itemService.save(this.form.value).subscribe((item) => {
             this.loading = false;
-            if (this.editMode) {
+            if (this.form.value.id) {
                 this.toastr.open(
                     'Item atualizado com sucesso!'
                 );

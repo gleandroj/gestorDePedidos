@@ -9,15 +9,6 @@ export const menus = [
         ]
     },
     {
-        title: 'Usuários',
-        action: '/bufallus/administrar/usuarios',
-        icon: 'person',
-        isLink: true,
-        authorization: [
-            'administrator'
-        ]
-    },
-    {
         title: 'Cardapio',
         action: '/bufallus/administrar/cardapio',
         icon: 'restaurant_menu',
@@ -25,5 +16,14 @@ export const menus = [
         authorization: [
             'administrator'
         ]
+    },
+    {
+        title: 'Usuários',
+        action: '/bufallus/administrar/usuarios',
+        icon: 'person',
+        isLink: true,
+        authorization: [
+            'administrator'
+        ]
     }
-]
+];

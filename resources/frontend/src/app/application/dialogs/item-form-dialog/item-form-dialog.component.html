@@ -5,7 +5,8 @@
     <mat-card-content fxLayout="column">
         <div fxFlex="100" class="input-card">
             <mat-form-field class="full-width">
-                <input matInput placeholder="Item" formControlName="description" name="description" type="text" required>
+                <input matInput placeholder="Descrição" formControlName="description" name="description" type="text"
+                       required>
                 <mat-error *ngIf="form.controls['description'].hasError('required')">
                     O campo item é <strong>obrigatório.</strong>
                 </mat-error>
@@ -21,6 +22,6 @@
     <button mat-button (click)="cancel()">Cancelar</button>
     <span class="spacer"></span>
     <button mat-button mat-raised-button color="accent" [disabled]="form.invalid || form.pending || loading"
-        (click)="save()">Salvar
+            (click)="save()">Salvar
     </button>
 </mat-dialog-actions>

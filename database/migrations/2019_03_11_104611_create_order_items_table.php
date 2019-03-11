@@ -18,9 +18,9 @@ class CreateOrderItemsTable extends Migration
             $table->string('observation')->nullable();
             $table->integer('quantity')->default(1);
             $table->unsignedInteger('order_id');
-            $table->foreign('order_id')->referes('id')->on('orders');
+            $table->foreign('order_id')->references('id')->on('orders');
             $table->unsignedInteger('item_id');
-            $table->foreign('item_id')->referes('id')->on('items');
+            $table->foreign('item_id')->references('id')->on('items');
             $table->boolean('is_done')->default(false);
             $table->softDeletes();
             $table->timestamps();

@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
 use Bufallus\Http\Controllers\Controller;
 
 /**
- * Class ItemController
+ * Class OrderController
  * @package Bufallus\Http\Controllers\Item
  */
 class ItemController extends Controller
@@ -53,41 +53,41 @@ class ItemController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \Bufallus\Models\Item $menu
+     * @param  \Bufallus\Models\Item $item
      * @return ItemResource|Item
      */
-    public function show(Item $menu)
+    public function show(Item $item)
     {
-        return new ItemResource($menu);
+        return new ItemResource($item);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request $request
-     * @param  \Bufallus\Models\Item $menu
+     * @param  \Bufallus\Models\Item $item
      * @return \Illuminate\Http\Response|ItemResource|Item
      */
-    public function update(Request $request, Item $menu)
+    public function update(Request $request, Item $item)
     {
         $this->validate($request, [
             'description' => 'string'
         ]);
-        $menu->update($request->only('description'));
-        return new ItemResource($menu->refresh());
+        $item->update($request->only('description'));
+        return new ItemResource($item->refresh());
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \Bufallus\Models\Item $menu
+     * @param  \Bufallus\Models\Item $item
      * @return array
      * @throws \Exception
      */
-    public function destroy(Item $menu)
+    public function destroy(Item $item)
     {
         return [
-            'success' => boolval($menu->delete())
+            'success' => boolval($item->delete())
         ];
     }
 }

@@ -89,7 +89,7 @@ export class OrderFormDialogComponent {
         this.loading = true;
         this.orderService.save(this.form.value).subscribe((order) => {
             this.loading = false;
-            if (this.editMode) {
+            if (this.form.value.id) {
                 this.toastr.open(
                     'Pedido atualizado com sucesso!'
                 );
@@ -98,7 +98,6 @@ export class OrderFormDialogComponent {
                     'Pedido cadastrado com sucesso!'
                 );
             }
-
             this.dialogRef.close(order);
         }, (response: HttpErrorResponse) => {
             this.loading = false;

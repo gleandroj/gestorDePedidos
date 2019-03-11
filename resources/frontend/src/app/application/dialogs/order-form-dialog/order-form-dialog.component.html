@@ -46,7 +46,7 @@
                                 </ngx-mat-select-search>
                             </mat-option>
                             <mat-option *ngFor="let item of filteredOptions[i] | async" [value]="item.id">
-                                {{ item.item }}
+                                {{ item.description }}
                             </mat-option>
                         </mat-select>
                         <mat-error *ngIf="control.get('item_id').hasError('required')">
