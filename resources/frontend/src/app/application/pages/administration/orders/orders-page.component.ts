@@ -1,11 +1,12 @@
-import {Component} from '@angular/core';
+import {Component, OnDestroy} from '@angular/core';
 import {MatDialog} from '@angular/material';
 import {OrderEntity} from '../../../../core/entities/order-entity';
 import {OrderService} from '../../../../core/services/order.service';
-import {take} from 'rxjs/operators';
+import {switchMap, take, takeUntil} from 'rxjs/operators';
 import {OrderFormDialogComponent} from '../../../dialogs';
 import {ItemService} from '../../../../core/services';
 import {ItemEntity} from '../../../../core/entities/item-entity';
+import {interval, Subject} from 'rxjs';
 
 @Component({
     selector: 'app-orders-page',
@@ -14,12 +15,13 @@ import {ItemEntity} from '../../../../core/entities/item-entity';
         './orders-page.component.less'
     ],
 })
-export class OrdersPageComponent {
+export class OrdersPageComponent implements OnDestroy {
 
     public orders: OrderEntity[] = [];
     public menus: ItemEntity[] = [];
     public loading = false;
     public showFinalized: boolean;
+    private destroyed$: Subject = new Subject();
 
     get filteredOrders() {
         return this.orders.filter(o => this.showFinalized ? true : !o.is_done);
@@ -39,6 +41,11 @@ export class OrdersPageComponent {
             .all()
             .pipe(take(1))
             .subscribe(menus => this.menus = menus);
+
+        interval(2).pipe(
+            takeUntil(this.destroyed$),
+            switchMap(() => this.orderService.all())
+        ).subscribe(orders => this.orders = orders);
     }
 
     menuById(id: number) {
@@ -47,6 +54,11 @@ export class OrdersPageComponent {
 
     orderItems(items: any[]) {
         return items;
+    }
+
+    ngOnDestroy(): void {
+        this.destroyed$.next();
+        this.destroyed$.complete();
     }
 
     markAsDone($event: any, order: OrderEntity) {
