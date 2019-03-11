@@ -1,0 +1,81 @@
+<h2 mat-dialog-title>{{ title }}</h2>
+<mat-dialog-content [formGroup]="form" class="mat-typography order-form">
+    <mat-progress-bar *ngIf="loading" [ngClass]="{'disabled': !loading}" mode="indeterminate"></mat-progress-bar>
+    <span class="white-space" *ngIf="!loading"></span>
+    <mat-card-content fxLayout="column">
+        <div fxFlex="100" class="input-card">
+            <mat-form-field class="full-width">
+                <input matInput placeholder="Mesa" formControlName="table" name="table" type="text" required>
+                <mat-error *ngIf="form.controls['table'].hasError('required')">
+                    O campo mesa é <strong>obrigatório.</strong>
+                </mat-error>
+                <mat-hint *ngIf="hasError('table')" style="color: #f44336;">
+                    {{ getError('table') }}
+                </mat-hint>
+            </mat-form-field>
+        </div>
+        <div style="margin-bottom: 45px; position: relative;">
+            <h3 class="mat-subheading-1">Itens</h3>
+            <button mat-icon-button mat-raised-button color="accent"
+                    (click)="addItem()"
+                    style="position: absolute; top: 0px; right: 20px;">
+                <mat-icon>add</mat-icon>
+            </button>
+        </div>
+        <div class="item-card" *ngFor="let control of items.controls; let i = index" formArrayName="items">
+            <button mat-icon-button mat-raised-button color="warn"
+                    (click)="items.removeAt(i)"
+                    style="position: absolute; top: -20px; right: 20px;">
+                <mat-icon>delete</mat-icon>
+            </button>
+            <ng-container [formGroupName]="i">
+                <div fxFlex="100" class="input-card">
+                    <mat-form-field style="width: 40px;">
+                        <input matInput placeholder="Qtd." formControlName="quantity" type="number" min="1">
+                    </mat-form-field>
+                    <mat-form-field style="width: calc(100% - 60px);margin-left: 20px;">
+                        <mat-select formControlName="item_id" required placeholder="Selecione o item">
+                            <mat-option>
+                                <ngx-mat-select-search (input)="filter($event, i)"
+                                                       noEntriesFoundLabel="Nenhum item disponível"
+                                                       [clearSearchInput]="true"
+                                                       placeholderLabel="">
+                                    <mat-icon ngxMatSelectSearchClear (click)="filter({target: {value: ''}}, i)">
+                                        close
+                                    </mat-icon>
+                                </ngx-mat-select-search>
+                            </mat-option>
+                            <mat-option *ngFor="let item of filteredOptions[i] | async" [value]="item.id">
+                                {{ item.item }}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="control.get('item_id').hasError('required')">
+                            O campo item é <strong>obrigatório.</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div fxFlex="100" class="input-card">
+                    <mat-form-field class="full-width">
+                        <input matInput placeholder="Obs" formControlName="observation" name="observation"
+                               type="text">
+                    </mat-form-field>
+                </div>
+            </ng-container>
+        </div>
+        <div class="text-center" *ngIf="items.controls.length === 0">
+            <h4 class="text-center">Ainda não há itens no pedido</h4>
+            <button mat-raised-button color="accent" (click)="addItem()">
+                <mat-icon svgIcon="fastfood-svg"></mat-icon>
+                Adicionar item
+            </button>
+        </div>
+    </mat-card-content>
+</mat-dialog-content>
+<span class="spacer"></span>
+<mat-dialog-actions>
+    <button mat-button (click)="cancel()">Cancelar</button>
+    <span class="spacer"></span>
+    <button mat-button mat-raised-button color="accent" [disabled]="form.invalid || form.pending || loading"
+            (click)="save()">Salvar
+    </button>
+</mat-dialog-actions>

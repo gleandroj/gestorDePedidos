@@ -1,0 +1,26 @@
+<h2 mat-dialog-title>{{ title }}</h2>
+<mat-dialog-content [formGroup]="form" class="mat-typography">
+    <mat-progress-bar *ngIf="loading" [ngClass]="{'disabled': !loading}" mode="indeterminate"></mat-progress-bar>
+    <span class="white-space" *ngIf="!loading"></span>
+    <mat-card-content fxLayout="column">
+        <div fxFlex="100" class="input-card">
+            <mat-form-field class="full-width">
+                <input matInput placeholder="Item" formControlName="item" name="item" type="text" required>
+                <mat-error *ngIf="form.controls['item'].hasError('required')">
+                    O campo item é <strong>obrigatório.</strong>
+                </mat-error>
+                <mat-hint *ngIf="hasError('item')" style="color: #f44336;">
+                    {{ getError('item') }}
+                </mat-hint>
+            </mat-form-field>
+        </div>
+    </mat-card-content>
+</mat-dialog-content>
+<span class="spacer"></span>
+<mat-dialog-actions>
+    <button mat-button (click)="cancel()">Cancelar</button>
+    <span class="spacer"></span>
+    <button mat-button mat-raised-button color="accent" [disabled]="form.invalid || form.pending || loading"
+        (click)="save()">Salvar
+    </button>
+</mat-dialog-actions>

@@ -1,0 +1,201 @@
+/* You can add global styles to this file, and also import other style files */
+//@import url(https://fonts.googleapis.com/css?family=Inconsolata:400,700);
+@import url(https://fonts.googleapis.com/css?family=Roboto);
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+@import "~material-design-icons/iconfont/material-icons.css";
+@import "less/main.less";
+
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+html, body {
+  display: initial;
+  height: 100%;
+  min-height: 100vh;
+  margin: 0 !important;
+  overflow-x: hidden;
+  background: rgba(0, 0, 0, 0.087);
+  font-family: 'Roboto', sans-serif;
+}
+
+.mat-event-day {
+  position: relative;
+  vertical-align: middle;
+  align-items: center;
+  mat-icon {
+    margin-right: 10px;
+  }
+}
+
+mat-expansion-panel {
+  outline: none;
+  //margin-bottom: 15px;
+  //box-shadow: none;
+  &.even {
+    //background: transparent;
+  }
+  &.odd {
+    //background: white;
+  }
+}
+
+.mat-group-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0 24px;
+  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
+  background: #f8f8f8;
+  color: rgba(0, 0, 0, .87);
+  height: 48px;
+}
+
+.mat-group-header:not(:first-child) {
+  margin-top: 20px;
+}
+
+.mat-item-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0 24px;
+  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
+  background: #fff;
+  color: rgba(0, 0, 0, .87);
+  height: 48px;
+  box-sizing: content-box;
+  margin: 0;
+  position: relative;
+  cursor: pointer;
+}
+
+.mat-toolbar-fab-buttom {
+  position: fixed;
+  z-index: 100;
+  right: 5%;
+  top: 35px;
+}
+
+.push-10 {
+  margin-bottom: 10px;
+}
+
+.text-center {
+  text-align: center !important;
+}
+
+.circular--landscape {
+  display: inline-block;
+  position: relative;
+  width: 70px;
+  height: 70px;
+  overflow: hidden;
+  border-radius: 50%;
+  img {
+    width: auto;
+    height: 100%;
+    margin-left: -50px;
+  }
+}
+
+.circular--landscape.xl {
+  width: 40px !important;
+  height: 40px !important;
+}
+
+@media screen and (max-width: @screen-sm-max) {
+  .dialog-fullscreen {
+    width: 100%;
+    height: 100%;
+    min-width: 100%;
+  }
+}
+
+.table-responsive {
+  table {
+    width: 100%;
+    overflow: hidden;
+  }
+  min-height: .01%;
+  overflow-x: auto;
+  table > th, td, .mat-header-cell {
+    white-space: nowrap;
+    padding: 0 5px !important;
+  }
+}
+
+table {
+  width: 100%;
+  box-shadow: none !important;
+}
+
+table.loading {
+  position: relative;
+}
+
+table.loading::before {
+  position: absolute;
+  display: block;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  content: " ";
+  background: rgba(255, 255, 255, .7);
+}
+
+table.loading::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: -20px 0 0 -20px;
+  color: #646464;
+  text-align: center;
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 30px;
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-feature-settings: 'liga';
+  font-feature-settings: 'liga';
+  z-index: 2;
+  content: "refresh";
+  -webkit-animation: fa-spin 2s infinite linear;
+  animation: fa-spin 2s infinite linear;
+}
+
+.img-responsive {
+  max-width: 100%;
+  height: auto;
+  margin-right: auto !important;
+  display: block !important;
+  vertical-align: middle;
+  border-style: none;
+  margin-left: auto !important;
+}
+.spacer {
+  flex-grow: 1;
+}
+
+mat-dialog-content{
+  max-height: 90vh !important;
+}
+
+@media screen and (min-width: @screen-md-min) {
+  mat-dialog-content{
+    max-height: 70vh !important;
+  }
+}

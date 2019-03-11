@@ -1,0 +1,90 @@
+.order-list {
+  width: 100%;
+  max-width: 100%;
+  border: solid 1px #ccc;
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.order-box {
+  border-bottom: solid 1px #ccc;
+  color: rgba(0, 0, 0, 0.87);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  cursor: move;
+  background: white;
+  font-size: 14px;
+}
+
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 4px;
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+  0 8px 10px 1px rgba(0, 0, 0, 0.14),
+  0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.order-box:last-child {
+  border: none;
+}
+
+.order-list.cdk-drop-list-dragging .order-box:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.order-custom-placeholder {
+  background: #ccc;
+  border: dotted 3px #999;
+  min-height: 60px;
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.order-items {
+  display: block;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.order-item {
+  border-radius: 6px;
+  display: flex;
+  background-color: #e5e5e5;
+  margin: 0 5px 10px 5px;
+}
+
+/deep/ .item-card {
+  border-radius: 6px;
+  background-color: #e5e5e5;
+  padding: 20px 10px 10px 10px;
+  flex-direction: column !important;
+  display: flex;
+  position: relative;
+  margin-bottom: 30px;
+}
+
+/deep/ .item-remove {
+
+}
+
+.mat-expansion-indicator {
+  position: absolute;
+  left: 15px;
+}
+
+.img-responsive {
+  width: auto;
+  height: 300px;
+}
+
+/deep/ .mat-expansion-panel-body {
+  padding: 0 10px 16px !important;
+}

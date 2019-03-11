@@ -1,0 +1,104 @@
+version: 2
+jobs:
+  build:
+    working_directory: /home/deploy/app
+    docker:
+    - image: gleandroj/laravel
+      environment:
+        LARAVEL_APP_ENV: testing
+        LARAVEL_DB_CONNECTION: pgsql
+        LARAVEL_DB_HOST: 127.0.0.1
+        LARAVEL_DB_PORT: 5432
+        LARAVEL_DB_DATABASE: teste_db
+        LARAVEL_DB_USERNAME: teste_usuario
+        LARAVEL_DB_PASSWORD: cG6uJNyPmvQ5AEs6Lx6X
+    - image: circleci/postgres:9.6
+      environment:
+        POSTGRES_DB: teste_db
+        POSTGRES_USER: teste_usuario
+        POSTGRES_PASSWORD: cG6uJNyPmvQ5AEs6Lx6X
+    steps:
+    - checkout
+    - add_ssh_keys
+    - restore_cache:
+        keys:
+        - v1-dependencies-{{ checksum "composer.json" }}
+        - v1-dependencies-
+    - run:
+        name: Composer Install
+        command: composer install -n --prefer-dist
+    - save_cache:
+        paths:
+        - ./vendor
+        key: v1-dependencies-{{ checksum "composer.json" }}
+    - restore_cache:
+        keys:
+        - node-v1-{{ checksum "package.json" }}
+        - node-v1-
+    - run:
+        name: Npm Install
+        command: npm install
+    - save_cache:
+        key: node-v1-{{ checksum "package.json" }}
+        paths:
+        - ./node_modules
+    - run:
+        name: Generate Env File
+        command: env | grep LARAVEL | sed  's/LARAVEL_/\x0/' >> .env
+    - run:
+        name: Build Frontend
+        command: ng build
+    - run:
+        name: Configura Passport
+        command: php artisan passport:keys
+    - run:
+        name: Configura permissões
+        command: chmod -R 777 *
+    - run:
+        name: Test PhpUnit
+        command: |
+          php artisan config:clear
+          vendor/bin/phpunit
+    - run:
+        name: Test E2E
+        command: |
+          service php7.1-fpm start
+          service nginx start
+          service monit start
+          php artisan migrate:refresh --seed
+          php artisan cache:clear
+          php artisan config:clear
+          npm run e2e
+  deployment:
+    working_directory: /home/deploy/app
+    docker:
+    - image: gleandroj/laravel
+    environment:
+      BASH_ENV: ~/.bashrc
+      HEROKU_APP_NAME: "staging-sites-app"
+    steps:
+    - checkout
+    - run:
+        name: Setup Heroku
+        command: bash /home/deploy/app/.circleci/setup-heroku.sh
+    - run:
+        name: Add Heroku to known_hosts
+        command: ssh-keyscan -H heroku.com >> ~/.ssh/known_hosts
+    - run:
+        name: Deploy Master to Heroku
+        command: |  # this command is framework-dependent and may vary
+          heroku git:remote -a $HEROKU_APP_NAME
+          git push --force git@heroku.com:$HEROKU_APP_NAME.git HEAD:refs/heads/master
+        # Fluxo do CircleCI
+workflows:
+  version: 2
+  build_release:
+    jobs:
+    - build
+    - deployment:
+        requires:
+        - build
+        filters:
+          branches:
+            only:
+            - master

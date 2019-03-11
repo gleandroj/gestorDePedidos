@@ -1,0 +1,182 @@
+<h2 mat-dialog-title>{{ title }}</h2>
+<mat-dialog-content [formGroup]="form" class="mat-typography">
+    <mat-progress-bar *ngIf="loading" [ngClass]="{'disabled': !loading}" mode="indeterminate"></mat-progress-bar>
+    <span class="white-space" *ngIf="!loading"></span>
+    <mat-card-content fxLayout="column">
+
+        <div fxFlex="100" class="input-card">
+            <mat-form-field class="full-width">
+                <input
+                        matInput
+                        placeholder="Nome Completo"
+                        formControlName="name"
+                        name="name"
+                        type="text"
+                        required>
+                <mat-error *ngIf="form.controls['name'].hasError('required')">
+                    O campo nome é <strong>obrigatório.</strong>
+                </mat-error>
+                <mat-hint *ngIf="hasError('name')" style="color: #f44336;">
+                    {{ getError('name') }}
+                </mat-hint>
+            </mat-form-field>
+        </div>
+
+        <div fxFlex="100" fxLayout="row" fxLayoutWrap class="input-card">
+            <div>
+                <h3>Sexo:</h3>
+                <mat-radio-group formControlName="gender" required>
+                    <mat-radio-button *ngFor="let sexo of sexos" [value]="sexo.value">
+                        {{sexo.label}}
+                    </mat-radio-button>
+                </mat-radio-group>
+            </div>
+        </div>
+
+        <mat-form-field class="input-card" style="margin-top: 20px;">
+            <input
+                    mask="99/99/9999"
+                    pattern="\d{2}\/\d{2}\/\d{4}"
+                    [dropSpecialCharacters]="false"
+                    required
+                    name="birthday"
+                    matInput
+                    type="text"
+                    appDateValidator
+                    formControlName="birthday"
+                    placeholder="Data de nascimento">
+            <mat-icon matSuffix>date_range</mat-icon>
+            <mat-error *ngIf="form.controls['birthday'].hasError('required')">
+                O campo data de nascimento é <strong>obrigatório.</strong>
+            </mat-error>
+            <mat-error *ngIf="form.controls['birthday'].hasError('pattern')">
+                Entre com uma data válida.
+            </mat-error>
+            <mat-hint *ngIf="hasError('birthday')" style="color: #f44336;">
+                {{ getError('birthday') }}
+            </mat-hint>
+        </mat-form-field>
+
+        <div fxFlex="100" fxLayout="row" fxLayout.xs="column" fxLayoutWrap class="input-card">
+            <mat-form-field fxFlex="45" fxFlex.sm="100" fxFlex.xs="100">
+                <input
+                        matInput
+                        placeholder="Telefone"
+                        formControlName="cellphone"
+                        required
+                        name="cellphone"
+                        pattern="\(\d{2}\) \d{5}-\d{4}"
+                        [dropSpecialCharacters]="false"
+                        mask="(99) 99999-9999"
+                        appCheckAvailable
+                        apiUrl="/api/auth/available/cellphone"
+                        [ignoreId]="user.id"
+                        field="cellphone"
+                        type="text">
+                <mat-error *ngIf="form.controls['cellphone'].hasError('pattern')">
+                    Entre com um telefone válido.
+                </mat-error>
+                <mat-error *ngIf="form.controls['cellphone'].hasError('required')">
+                    O campo telefone é <strong>obrigatório.</strong>
+                </mat-error>
+                <mat-error *ngIf="form.controls['cellphone'].hasError('appCheckAvailable')">
+                    Telefone já cadastrado no sistema.
+                </mat-error>
+                <mat-hint *ngIf="hasError('cellphone')" style="color: #f44336;">
+                    {{ getError('cellphone') }}
+                </mat-hint>
+            </mat-form-field>
+            <span fxFlex="5" fxFlex.sm="0"></span>
+            <mat-form-field fxFlex="50" fxFlex.sm="100" fxFlex.xs="100">
+                <input
+                        matInput
+                        placeholder="E-mail"
+                        formControlName="email"
+                        type="text"
+                        name="email"
+                        appCheckAvailable
+                        apiUrl="/api/auth/available/email"
+                        field="email"
+                        [ignoreId]="user.id"
+                        email
+                        required>
+                <mat-error *ngIf="form.controls['email'].hasError('email')">
+                    Entre com um endereço de e-mail válido.
+                </mat-error>
+                <mat-error *ngIf="form.controls['email'].hasError('required')">
+                    O campo e-mail é <strong>obrigatório.</strong>
+                </mat-error>
+                <mat-error *ngIf="form.controls['email'].hasError('appCheckAvailable')">
+                    E-mail já cadastrado no sistema.
+                </mat-error>
+                <mat-hint *ngIf="hasError('email')" style="color: #f44336;">
+                    {{ getError('email') }}
+                </mat-hint>
+            </mat-form-field>
+        </div>
+
+        <div fxFlex="100" fxLayout="row" fxLayout.xs="column" fxLayoutWrap class="input-card">
+            <mat-form-field fxFlex="45" fxFlex.sm="100" fxFlex.xs="100">
+                <input
+                        matInput
+                        placeholder="Senha"
+                        formControlName="password"
+                        type="password"
+                        name="password"
+                        minlength="6"
+                        [required]="!editMode">
+                <mat-error *ngIf="form.controls['password'].hasError('required')">
+                    O campo senha é <strong>obrigatório.</strong>
+                </mat-error>
+                <mat-error
+                        *ngIf="!form.controls['password'].hasError('required') && form.controls['password'].hasError('minlength')">
+                    A senha deve conter no mínino <strong>6</strong> caracteres.
+                </mat-error>
+                <mat-hint *ngIf="hasError('password')" style="color: #f44336;">
+                    {{ getError('password') }}
+                </mat-hint>
+            </mat-form-field>
+            <span fxFlex="5"></span>
+            <mat-form-field fxFlex="45" fxFlex.sm="100" fxFlex.xs="100">
+                <input
+                        matInput
+                        appValidateEqual="password"
+                        placeholder="C/ Senha"
+                        formControlName="password_confirmation"
+                        type="password"
+                        name="password_confirmation"
+                        [required]="!editMode">
+                <mat-error *ngIf="form.controls['password_confirmation'].hasError('required')">
+                    O campo confirmação senha é <strong>obrigatório.</strong>
+                </mat-error>
+                <mat-error
+                        *ngIf="!form.controls['password_confirmation'].hasError('required')
+                            && form.controls['password_confirmation'].hasError('validateEqual')">
+                    As senhas não conferem.
+                </mat-error>
+                <mat-hint *ngIf="hasError('password_confirmation')" style="color: #f44336;">
+                    {{ getError('password_confirmation') }}
+                </mat-hint>
+            </mat-form-field>
+        </div>
+
+        <div fxFlex="100" fxLayout="row" fxLayoutWrap class="input-card">
+            <mat-form-field>
+                <mat-select placeholder="Papel" formControlName="role">
+                    <mat-option>Nenhum</mat-option>
+                    <mat-option value="administrator">Administrador</mat-option>
+                    <mat-option value="auxiliary">Auxiliar</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+    </mat-card-content>
+</mat-dialog-content>
+<span class="spacer"></span>
+<mat-dialog-actions>
+    <button mat-button (click)="cancel()">Cancelar</button>
+    <span class="spacer"></span>
+    <button mat-button mat-raised-button color="accent"
+            [disabled]="form.invalid || form.pending || loading" (click)="save()">Salvar
+    </button>
+</mat-dialog-actions>

@@ -1,0 +1,16 @@
+<div fxFlex="100">
+    <h3 *ngIf="label">{{ label }}</h3>
+    <div fxLayout="row" fxLayoutAlign.xs="center center" fxLayoutAlign="start center" fxLayoutWrap>
+        <img style="margin:15px;" class="circular--landscape" [src]="imageSrc">
+        <input [disabled]="isDisabled" hidden type="file" #imgFileInput id="imgFileInput"
+               (change)="previewImage($event)"/>
+        <div fxLayout="column" style="margin:15px;">
+            <button type="button" mat-button mat-raised-button (click)="imgFileInput.click()" [disabled]="isDisabled">
+                Selecionar Imagem
+            </button>
+            <button style="margin-top:15px;" type="button" [disabled]="imageUploadData == null || isDisabled" mat-button
+                    mat-raised-button (click)="removeImage()">Remover Imagem
+            </button>
+        </div>
+    </div>
+</div>

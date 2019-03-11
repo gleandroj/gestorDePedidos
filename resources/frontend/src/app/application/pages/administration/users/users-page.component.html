@@ -1,0 +1,69 @@
+<div class="mat-toolbar-fab-buttom">
+    <button mat-fab color="accent" (click)="edit(null, 'Cadastrar Usuário')">
+        <mat-icon>add</mat-icon>
+    </button>
+</div>
+<mat-card>
+    <mat-form-field appearance="outline">
+        <mat-label>Pesquisar</mat-label>
+        <input #input (input)="searchSubject.next(input.value)" matInput type="text" placeholder="Digite aqui...">
+        <mat-icon matPrefix>search</mat-icon>
+        <mat-icon style="cursor: pointer;" *ngIf="input.value != null && input.value != ''"
+            (click)="searchSubject.next(input.value = null)" matSuffix>
+            clear
+        </mat-icon>
+    </mat-form-field>
+    <div class="table-responsive">
+        <table [ngClass]="{'loading': loading}" mat-table [dataSource]="paginator.data" matSort
+            (matSortChange)="sortData($event)">
+            <ng-container matColumnDef="name">
+                <th mat-header-cell mat-sort-header="name" *matHeaderCellDef> Nome</th>
+                <td mat-cell *matCellDef="let element"> {{element.name}}</td>
+            </ng-container>
+            <ng-container matColumnDef="email">
+                <th mat-header-cell mat-sort-header="email" *matHeaderCellDef> E-mail</th>
+                <td mat-cell *matCellDef="let element"> {{element.email}}</td>
+            </ng-container>
+            <ng-container matColumnDef="birthday">
+                <th mat-header-cell mat-sort-header="birthday" *matHeaderCellDef> Dt. Nascimento
+                </th>
+                <td mat-cell *matCellDef="let element"> {{element.birthday}}
+                </td>
+            </ng-container>
+            <ng-container matColumnDef="cellphone">
+                <th mat-header-cell mat-sort-header="cellphone" *matHeaderCellDef> Telefone</th>
+                <td mat-cell *matCellDef="let element"> {{element.cellphone | mask: '(99) 99999-9999'}}
+                </td>
+            </ng-container>
+            <ng-container matColumnDef="gender">
+                <th mat-header-cell mat-sort-header="gender" *matHeaderCellDef> Gênero</th>
+                <td mat-cell *matCellDef="let element"> {{genders[element.gender]}}</td>
+            </ng-container>
+            <ng-container matColumnDef="role">
+                <th mat-header-cell mat-sort-header="role" *matHeaderCellDef> Papel</th>
+                <td mat-cell *matCellDef="let element"> {{roles[element.role]}}</td>
+            </ng-container>
+            <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef style="width: 5%;padding: 0 5px !important;">
+                    Ações
+                </th>
+                <td mat-cell *matCellDef="let element" style="width: 10%;padding: 0 5px !important;">
+                    <button (click)="edit(element, 'Editar Usuário')" mat-icon-button matTooltip="Editar">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+    </div>
+    <ng-container *ngIf="!loading && (!paginator || paginator.data.length === 0)">
+        <div class="mat-typography img-responsive" style="text-align: center;">
+            <h2 style="color: rgba(0, 0, 0, .4)">Nenhum usuário disponível.</h2>
+        </div>
+        <img class="img-responsive" src="/dist/assets/img/empty-state.png">
+    </ng-container>
+    <mat-paginator (page)="processPaginate(($event.pageIndex + 1), $event.pageSize, filter)"
+        [length]="paginator.meta.total" [pageSize]="paginator.meta.per_page" [pageSizeOptions]="[5, 10, 25, 100]">
+    </mat-paginator>
+</mat-card>
