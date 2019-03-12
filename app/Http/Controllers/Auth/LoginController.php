@@ -43,7 +43,7 @@ class LoginController extends Controller
             $this->validateLogin($httpRequest);
             $credentials = $this->credentials($httpRequest);
 
-            event(new Attempting($credentials, false));
+            event(new Attempting(null, $credentials, false));
 
             $user = (new User())->findForPassport($credentials['username']);
 
@@ -60,7 +60,7 @@ class LoginController extends Controller
             );
 
             if ($response->isSuccessful()) {
-                event(new Authenticated($user));
+                event(new Authenticated(null, $user));
 
                 return [
                     'token' => json_decode($response->content(), true),
