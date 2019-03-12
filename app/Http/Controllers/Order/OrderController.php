@@ -27,8 +27,10 @@ class OrderController extends Controller
      */
     public function index()
     {
+        $filter = request('filter', []);
+        $interval = $this->parseInterval($filter['interval'] ?? []);
         return OrderResource::collection(
-            Order::notFinalized()->get()
+            Order::notFinalized($interval[0], $interval[1])
         );
     }
 

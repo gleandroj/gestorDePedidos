@@ -81,7 +81,7 @@ export class Interceptor implements HttpInterceptor {
             );
         } else if ((resp instanceof HttpErrorResponse) && resp.status === 403) {
             toastr.open(resp.error.message);
-            router.navigate(['/sites/unauthorized']).then();
+            router.navigate(['/bufallus/unauthorized']).then();
             return throwError(resp);
         }
 

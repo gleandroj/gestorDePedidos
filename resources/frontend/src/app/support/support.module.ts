@@ -37,7 +37,7 @@ import {
     MatProgressBarModule,
     MatProgressSpinnerModule,
     MatAutocompleteModule,
-    MatListModule
+    MatListModule, MatDatepickerModule, MatNativeDateModule
 } from '@angular/material';
 
 import {QuillModule} from 'ngx-quill';
@@ -69,7 +69,9 @@ const materialModules = [
     MatProgressBarModule,
     MatAutocompleteModule,
     MatListModule,
-    NgxMatSelectSearchModule
+    NgxMatSelectSearchModule,
+    MatDatepickerModule,
+    MatNativeDateModule
 ];
 
 const exportShared = [

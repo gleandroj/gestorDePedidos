@@ -2,7 +2,7 @@ import {Component, OnDestroy} from '@angular/core';
 import {MatDialog} from '@angular/material';
 import {OrderEntity} from '../../../../core/entities/order-entity';
 import {OrderService} from '../../../../core/services/order.service';
-import {switchMap, take, takeUntil} from 'rxjs/operators';
+import {map, switchMap, take, takeUntil} from 'rxjs/operators';
 import {ConfirmDialogComponent, OrderFormDialogComponent} from '../../../dialogs';
 import {ItemService} from '../../../../core/services';
 import {ItemEntity} from '../../../../core/entities/item-entity';
@@ -25,6 +25,9 @@ export class OrdersPageComponent implements OnDestroy {
     public showFinalized: boolean;
     public showItemsFinalized: { [key: number]: boolean } = {};
     private destroyed$ = new Subject();
+    public filter = {
+        interval: [new Date(), new Date()]
+    };
 
     get filteredOrders() {
         return this.orders
@@ -37,11 +40,6 @@ export class OrdersPageComponent implements OnDestroy {
         private toastr: ToastService,
         private dialogService: MatDialog
     ) {
-        this.orderService.all()
-            .pipe(
-                take(1)
-            )
-            .subscribe(orders => this.orders = orders);
         this.itemService
             .all()
             .pipe(take(1))
@@ -49,25 +47,18 @@ export class OrdersPageComponent implements OnDestroy {
 
         interval(10000).pipe(
             takeUntil(this.destroyed$),
-            switchMap(() => this.orderService.all())
-        ).subscribe(orders => {
-            orders.forEach(data => {
-                const order = this.orders.find(o => o.id === data.id);
-                if (order) {
-                    Object.assign(order, {
-                        is_done: data.is_done,
-                        table: data.table,
-                        created_at: data.created_at,
-                        total_price: data.total_price,
-                        finalized_at: data.finalized_at,
-                        id: data.id
-                    });
-                    order.items = [].concat(data.items);
-                } else {
-                    this.orders.push(order);
-                }
-            });
-        });
+            map(() => this.refresh())
+        ).subscribe();
+
+        this.refresh();
+    }
+
+    refresh() {
+        this.orderService.all(this.filter)
+            .pipe(
+                take(1)
+            )
+            .subscribe(orders => this.orders = orders);
     }
 
     menuById(id: number) {
@@ -147,5 +138,9 @@ export class OrdersPageComponent implements OnDestroy {
                     this.toastr.open('Pedido cancelado com sucesso!');
                 }
             });
+    }
+
+    applyFilter() {
+
     }
 }

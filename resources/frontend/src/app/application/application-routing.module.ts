@@ -7,7 +7,7 @@ import {
     UsersPageComponent,
     ForgetPasswordPageComponent,
     ResetPasswordPageComponent,
-    ItemsPageComponent, OrdersPageComponent,
+    ItemsPageComponent, OrdersPageComponent, DashboardPageComponent,
 } from './pages';
 import {AuthGuard} from '../core/guards/auth-guard';
 
@@ -51,6 +51,13 @@ const routes: Routes = [
                 path: '',
                 pathMatch: 'full',
                 redirectTo: 'administrar/pedidos'
+            },
+            {
+                path: 'dashboard',
+                component: DashboardPageComponent,
+                data: {
+                    breadcrumb: 'Dashboard'
+                }
             },
             {
                 path: 'administrar',

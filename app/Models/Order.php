@@ -3,7 +3,6 @@
 namespace Bufallus\Models;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
 
 class Order extends AbstractModel
 {
@@ -23,14 +22,17 @@ class Order extends AbstractModel
     ];
 
     /**
-     * @param Builder $builder
-     * @return Builder
+     * @param null $from
+     * @param null $to
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Query\Builder[]|\Illuminate\Support\Collection
      */
-    public function scopeNotFinalized(Builder $builder)
+    public static function notFinalized($from = null, $to = null)
     {
-        return $builder->whereNull('finalized_at')
-            ->orWhereBetween('finalized_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])
-            ->orderBy('created_at', 'asc');
+        $interval = [$from ?? Carbon::now()->startOfDay(), $to ?? Carbon::now()->endOfDay()];
+        return static::query()->whereNull('finalized_at')
+            ->orWhereBetween('created_at', $interval)
+            ->orderBy('created_at', 'asc')
+            ->get();
     }
 
     public function items()

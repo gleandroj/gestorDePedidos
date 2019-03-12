@@ -59,7 +59,7 @@ export class ResetPasswordPageComponent implements OnInit {
             this.auth.login(this.email, value.password).subscribe(() => {
                 this.toastr.open(response.status);
                 this.loading = false;
-                this.route.navigate(['/sites/']);
+                this.route.navigate(['/bufallus/']);
             });
         }, (response: HttpErrorResponse) => {
             this.loading = false;

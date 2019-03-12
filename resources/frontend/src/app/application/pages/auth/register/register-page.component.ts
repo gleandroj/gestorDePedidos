@@ -55,7 +55,7 @@ x
             this.auth.login(data.email, data.password)
                 .subscribe((t) => {
                     this.loading = false;
-                    this.route.navigate(['/sites']);
+                    this.route.navigate(['/bufallus']);
                     this.toastr.open(response.data.message);
                 });
         }, (error: HttpErrorResponse) => {

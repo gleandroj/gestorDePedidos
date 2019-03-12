@@ -12,7 +12,8 @@ export abstract class AbstractService<T> {
 
     protected abstract get resourceURL();
 
-    constructor(protected http: HttpClient) {}
+    constructor(protected http: HttpClient) {
+    }
 
     public all(): Observable<T[]> {
         return this.http.get<ApiResponse<T[]>>(
@@ -65,11 +66,25 @@ export abstract class AbstractService<T> {
         return _filter.filter(f => f != null).join('&');
     }
 
+    protected formatValue(value) {
+        if (value instanceof Date) {
+            return value.toISOString();
+        } else {
+            return value;
+        }
+    }
+
     protected formatFilter(filter: any): any {
         filter = filter ? filter : {};
         const data = {};
         Object.keys(filter).map(k => {
-            data[`filter[${k}]`] = filter[k];
+            if (Array.isArray(filter[k])) {
+                filter[k].forEach((val, key) => {
+                    data[`filter[${k}][${key}]`] = this.formatValue(val);
+                });
+            } else {
+                data[`filter[${k}]`] = this.formatValue(filter[k]);
+            }
             return k;
         });
         return data;

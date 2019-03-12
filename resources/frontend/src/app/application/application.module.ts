@@ -19,7 +19,8 @@ const PagesComponents = [
     Pages.ResetPasswordPageComponent,
     Pages.ErrorPageComponent,
     Pages.UsersPageComponent,
-    Pages.OrdersPageComponent
+    Pages.OrdersPageComponent,
+    Pages.DashboardPageComponent
 ];
 
 const DialogComponents = [

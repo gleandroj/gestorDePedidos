@@ -28,7 +28,7 @@ describe('workspace-project App', () => {
     it('should login on application and be redirected to home page', () => {
         page.fillAndSubmitLoginForm('admin@sites.com.br', 'secret').then(() => {
             page.getBrowserLocation().then((url) => {
-                expect(url).toContain('/sites/inicio');
+                expect(url).toContain('/bufallus/inicio');
             });
         });
     });

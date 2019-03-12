@@ -6,6 +6,7 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Bufallus\Models\User;
 
@@ -19,5 +20,18 @@ class Controller extends BaseController
     public function user()
     {
         return Auth::user();
+    }
+
+
+    /**
+     * @param $interval
+     * @return array
+     */
+    public function parseInterval($interval)
+    {
+        $timezone = config('app.timezone');
+        $from = !empty($interval) && !empty($interval[0]) ? Carbon::parse($interval[0])->setTimezone($timezone)->startOfDay()->setTimezone('UTC') : null;
+        $to = !empty($interval) && !empty($interval[1]) ? Carbon::parse($interval[1])->setTimezone($timezone)->endOfDay()->setTimezone('UTC') : null;
+        return [$from, $to];
     }
 }

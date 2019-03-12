@@ -30,12 +30,12 @@ class OrderItem extends AbstractModel
         return $this->price - $this->discount;
     }
 
-    protected function order()
+    public function order()
     {
         return $this->belongsTo(Order::class);
     }
 
-    protected function item()
+    public function item()
     {
         return $this->belongsTo(Item::class);
     }

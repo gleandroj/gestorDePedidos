@@ -1,5 +1,14 @@
 export const menus = [
     {
+        title: 'Dashboard',
+        action: '/bufallus/dashboard',
+        icon: 'dashboard',
+        isLink: true,
+        authorization: [
+            'administrator'
+        ]
+    },
+    {
         title: 'Pedidos',
         action: '/bufallus/administrar/pedidos',
         icon: 'fastfood-svg',

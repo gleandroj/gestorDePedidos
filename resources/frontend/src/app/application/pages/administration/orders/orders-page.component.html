@@ -8,6 +8,24 @@
         <mat-checkbox [(ngModel)]="showFinalized"></mat-checkbox>
         Mostrar finalizados
     </button>
+    <div mat-menu-item disableRipple (click)="$event.stopPropagation()" class="filter-form-field">
+        <mat-form-field appearance="outline">
+            <input matInput [(ngModel)]="filter.interval[0]" (focus)="picker.open()" [matDatepicker]="picker"
+                   (ngModelChange)="refresh()"
+                   placeholder="Dt. início">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+    </div>
+    <div mat-menu-item disableRipple (click)="$event.stopPropagation()" class="filter-form-field">
+        <mat-form-field appearance="outline">
+            <input [(ngModel)]="filter.interval[1]" (ngModelChange)="refresh()"
+                   (focus)="picker2.open()" matInput [matDatepicker]="picker2"
+                   placeholder="Dt. fim">
+            <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+            <mat-datepicker #picker2></mat-datepicker>
+        </mat-form-field>
+    </div>
 </mat-menu>
 <div class="mat-toolbar-fab-buttom">
     <button mat-fab color="accent" (click)="edit(null, 'Cadastrar Pedido')">
