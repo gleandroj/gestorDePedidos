@@ -90,11 +90,11 @@ class DashboardController extends Controller
                     'item_description' => $itemComputed->item->description
                 ];
             })->all(),
-            'orders_count' => $counts['orders'],
-            'cancelled_count' => $counts['cancelled'],
-            'balance' => $computed['balance'],
-            'cost' => $computed['cost'],
-            'discount' => $computed['discount'],
+            'orders_count' => $counts['orders'] ?? 0,
+            'cancelled_count' => $counts['cancelled'] ?? 0,
+            'balance' => $computed['balance'] ?? 0,
+            'cost' => $computed['cost'] ?? 0,
+            'discount' => $computed['discount'] ?? 0,
             'chart' => [
                 'format' => $groupBy === 'day' ? $dayFormat : ($groupBy === 'month' ? $montFormat : $yearFormat),
                 'labels' => collect($report->pluck('created_at'))->map(function ($data) {
