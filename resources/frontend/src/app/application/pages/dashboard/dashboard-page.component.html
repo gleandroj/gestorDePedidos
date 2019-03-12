@@ -28,8 +28,8 @@
         <mat-icon>refresh</mat-icon>
     </button>
 </div>
-<div class="push-30" style="display: flex; flex-direction: row; justify-content: space-between;">
-    <mat-card class="indicator-card mat-typography text-center">
+<div style="display: flex; flex-direction: row; justify-content: space-between; flex-wrap: wrap;">
+    <mat-card fxFlex.lt-sm="100" fxFlex.gt-sm="19" class="indicator-card mat-typography text-center push-20">
         <div class="push-10">
             <span class="mat-display-1">{{ data.orders_count | number: '1.0' }}</span>
         </div>
@@ -39,7 +39,7 @@
         </div>
     </mat-card>
 
-    <mat-card class="indicator-card mat-typography text-center">
+    <mat-card fxFlex.lt-sm="100" fxFlex.gt-sm="19" class="indicator-card mat-typography text-center push-20">
         <div class="push-10">
             <span class="mat-display-1">{{ data.balance | number: '1.2-2' }}R$</span>
         </div>
@@ -49,7 +49,7 @@
         </div>
     </mat-card>
 
-    <mat-card class="indicator-card mat-typography text-center">
+    <mat-card fxFlex.lt-sm="100" fxFlex.gt-sm="19" class="indicator-card mat-typography text-center push-20">
         <div class="push-10">
             <span class="mat-display-1">{{ data.cost | number: '1.2-2' }}R$</span>
         </div>
@@ -59,7 +59,7 @@
         </div>
     </mat-card>
 
-    <mat-card class="indicator-card mat-typography text-center">
+    <mat-card fxFlex.lt-sm="100" fxFlex.gt-sm="19" class="indicator-card mat-typography text-center push-20">
         <div class="push-10">
             <span class="mat-display-1">{{ data.discount | number: '1.2-2' }}R$</span>
         </div>
@@ -69,7 +69,7 @@
         </div>
     </mat-card>
 
-    <mat-card class="indicator-card mat-typography text-center">
+    <mat-card fxFlex.lt-sm="100" fxFlex.gt-sm="19" class="indicator-card mat-typography text-center push-20">
         <div class="push-10">
             <span class="mat-display-1">{{ data.cancelled_count | number: '1.0' }}</span>
         </div>
@@ -79,8 +79,8 @@
         </div>
     </mat-card>
 </div>
-<div>
-    <mat-card fxFlex.gt-sm="30"
+<div style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: space-between;">
+    <mat-card class="push-20" fxFlex.lt-sm="100" fxFlex.gt-sm="30"
               style="display: flex; flex-direction: column;">
         <mat-card-header>
             <mat-card-title>Top 5 Itens</mat-card-title>
@@ -105,7 +105,8 @@
             Nenhum item disponível
         </div>
     </mat-card>
-    <mat-card class="push-30-l" fxFlex.gt-sm="70"
+    <mat-card fxFlex.lt-sm="100" fxFlex.gt-sm="69"
+              class="push-20"
               style="display: flex; flex-direction: column;">
         <mat-card-header>
             <mat-card-title>Relação</mat-card-title>
@@ -118,6 +119,6 @@
                 </mat-select>
             </mat-form-field>
         </mat-card-header>
-        <div style="height: 290px" #container></div>
+        <div style="height: 250px" #container></div>
     </mat-card>
 </div>

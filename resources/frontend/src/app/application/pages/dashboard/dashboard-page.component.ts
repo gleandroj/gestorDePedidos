@@ -89,8 +89,22 @@ export class DashboardPageComponent implements OnDestroy, AfterViewInit {
             series: this.data.chart.series,
             credits: {
                 enabled: false
+            },
+            responsive: {
+                rules: [{
+                    condition: {
+                        maxWidth: 700,
+                    },
+                    chartOptions: {
+                        legend: {
+                            align: 'center',
+                            verticalAlign: 'top',
+                            layout: 'horizontal',
+                            floating: false
+                        }
+                    }
+                }]
             }
-
         } as any);
     }
 

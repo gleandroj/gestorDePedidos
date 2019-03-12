@@ -50,7 +50,7 @@ const routes: Routes = [
             {
                 path: '',
                 pathMatch: 'full',
-                redirectTo: 'administrar/pedidos'
+                redirectTo: 'dashboard'
             },
             {
                 path: 'dashboard',
