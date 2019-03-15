@@ -139,8 +139,4 @@ export class OrdersPageComponent implements OnDestroy {
                 }
             });
     }
-
-    applyFilter() {
-
-    }
 }

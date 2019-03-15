@@ -35,6 +35,7 @@ Route::middleware(['auth:api'])->group(function () {
 
     Route::pattern('item', '[0-9]+');
     Route::apiResource('items', 'Item\ItemController');
+    Route::get('items/all', 'Item\ItemController@all');
 
     Route::pattern('order', '[0-9]+');
     Route::apiResource('orders', 'Order\OrderController');

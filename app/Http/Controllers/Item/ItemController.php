@@ -20,6 +20,19 @@ use Bufallus\Http\Controllers\Controller;
  */
 class ItemController extends Controller
 {
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     */
+    public function all()
+    {
+        return ItemResource::collection(
+            Item::all()
+        );
+    }
+
     /**
      * Display a listing of the resource.
      *

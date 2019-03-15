@@ -48,7 +48,7 @@ export class OrderFormDialogComponent implements OnDestroy {
 
     constructor(
         public orderService: OrderService,
-        public menuService: ItemService,
+        public itemService: ItemService,
         public dialogRef: MatDialogRef<OrderFormDialogComponent>,
         public toastr: ToastService,
         public changeRef: ChangeDetectorRef,
@@ -67,7 +67,7 @@ export class OrderFormDialogComponent implements OnDestroy {
             )
         });
         this.loading = true;
-        this.menuService.all().subscribe(items => {
+        this.itemService.all().subscribe(items => {
             this.allItems = items;
             if (this.order.items) {
                 this.order.items.forEach((i) => this.addItem(i));
@@ -90,7 +90,7 @@ export class OrderFormDialogComponent implements OnDestroy {
     filter(event: any, index: number) {
         const item = event.target.value;
         this.filteredOptions[index] = item ?
-            this.allItems.filter(_ => _.description.toLowerCase().indexOf(item) === 0)
+            this.allItems.filter(_ => _.description.toLowerCase().indexOf(item.toLowerCase()) > -1)
             : this.allItems.slice();
     }
 

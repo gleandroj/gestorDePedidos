@@ -17,7 +17,7 @@ export abstract class AbstractService<T> {
 
     public all(): Observable<T[]> {
         return this.http.get<ApiResponse<T[]>>(
-            `${this.baseURL}/${this.resourceURL}/`
+            `${this.baseURL}/${this.resourceURL}/all`
         ).pipe(map((r) => r.data));
     }
 
