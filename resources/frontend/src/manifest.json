@@ -3,7 +3,7 @@
     "short_name": "Bufallus",
     "theme_color": "#1976d2",
     "background_color": "#fafafa",
-    "display": "fullscreen",
+    "display": "standalone",
     "start_url": "/app/index.html",
     "icons": [
       {
