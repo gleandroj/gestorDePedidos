@@ -25,6 +25,7 @@
             "polyfills": "resources/frontend/src/polyfills.ts",
             "tsConfig": "resources/frontend/src/tsconfig.app.json",
             "assets": [
+              "resources/frontend/src/manifest.json",
               "resources/frontend/src/favicon.ico",
               "resources/frontend/src/assets"
             ],
@@ -42,6 +43,8 @@
           },
           "configurations": {
             "production": {
+              "ngswConfigPath": "resources/frontend/src/ngsw-config.json",
+              "serviceWorker": true,
               "fileReplacements": [
                 {
                   "replace": "resources/frontend/src/environments/environment.ts",

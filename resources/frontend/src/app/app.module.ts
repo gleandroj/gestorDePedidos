@@ -8,6 +8,8 @@ import { CoreModule } from './core/core.module';
 import { ApplicationModule } from './application/application.module';
 import { registerLocaleData } from '@angular/common';
 import localePt from '@angular/common/locales/pt';
+import { ServiceWorkerModule } from "@angular/service-worker";
+import { environment } from '../environments/environment';
 
 registerLocaleData(localePt);
 
@@ -20,7 +22,8 @@ registerLocaleData(localePt);
         AppRoutingModule,
         SupportModule.forRoot(),
         CoreModule.forRoot(),
-        ApplicationModule.forRoot()
+        ApplicationModule.forRoot(),
+        environment.production ? ServiceWorkerModule.register("ngsw-worker.js") : []
     ],
     providers: [
         { provide: LOCALE_ID, useValue: 'pt-BR' }
