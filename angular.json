@@ -18,7 +18,6 @@
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "extractCss": true,
-            "baseHref": "/app/",
             "outputPath": "public/app",
             "index": "resources/frontend/src/index.html",
             "main": "resources/frontend/src/main.ts",
@@ -44,23 +43,23 @@
           "configurations": {
             "production": {
               "ngswConfigPath": "resources/frontend/src/ngsw-config.json",
-              "serviceWorker": true,
               "fileReplacements": [
                 {
                   "replace": "resources/frontend/src/environments/environment.ts",
                   "with": "resources/frontend/src/environments/environment.prod.ts"
                 }
               ],
+              "baseHref": "/app/",
               "optimization": true,
-              "outputHashing": "none",
+              "outputHashing": "all",
               "sourceMap": false,
               "extractCss": true,
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
               "vendorChunk": true,
-              "commonChunk": true,
-              "buildOptimizer": true
+              "buildOptimizer": true,
+              "serviceWorker": true
             }
           }
         },

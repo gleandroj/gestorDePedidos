@@ -15,5 +15,5 @@ Route::fallback(function () {
     if (preg_match('/api/', $patch)) {
         abort(404, 'O recurso solicitado não está disponível.');
     }
-    return redirect("/app/#/{$patch}");
+    return redirect("/app/");
 });

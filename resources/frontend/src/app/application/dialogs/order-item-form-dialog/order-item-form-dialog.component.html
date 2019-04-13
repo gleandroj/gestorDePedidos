@@ -1,4 +1,5 @@
-<mat-vertical-stepper [linear]="!editMode" #stepper (selectionChange)="$event.selectedIndex === 4 ? saveBtn.focus() : null">
+<mat-vertical-stepper [linear]="!editMode" #stepper
+    (selectionChange)="$event.selectedIndex === 4 ? saveBtn.focus() : null">
     <mat-step [stepControl]="form">
         <form [formGroup]="form">
             <ng-template matStepLabel>Selecione o item</ng-template>
@@ -66,8 +67,7 @@
         </form>
     </mat-step>
     <mat-step [stepControl]="form">
-        <form [formGroup]="form"
-            style="display: flex;flex-direction: column;position: absolute;left: -20px;right: 10px;">
+        <form [formGroup]="form" style="display: flex;flex-direction: column;margin-left: -20px;margin-right: 10px;">
             <ng-template matStepLabel>Finalizar</ng-template>
             <div style="display: flex; flex-direction: row;">
                 <mat-form-field style="width: calc(70% - 10px);  margin-right: 10px;">
