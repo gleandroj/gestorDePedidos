@@ -27,7 +27,8 @@ const DialogComponents = [
     Dialogs.ConfirmDialogComponent,
     Dialogs.UserFormDialogComponent,
     Dialogs.ItemFormDialogComponent,
-    Dialogs.OrderFormDialogComponent
+    Dialogs.OrderFormDialogComponent,
+    Dialogs.OrderItemFormDialogComponent
 ];
 
 const Components = [

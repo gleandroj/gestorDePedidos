@@ -1,14 +1,14 @@
-import {Component, OnDestroy} from '@angular/core';
-import {MatDialog} from '@angular/material';
-import {OrderEntity} from '../../../../core/entities/order-entity';
-import {OrderService} from '../../../../core/services/order.service';
-import {map, switchMap, take, takeUntil} from 'rxjs/operators';
-import {ConfirmDialogComponent, OrderFormDialogComponent} from '../../../dialogs';
-import {ItemService} from '../../../../core/services';
-import {ItemEntity} from '../../../../core/entities/item-entity';
-import {EMPTY, interval, Subject} from 'rxjs';
-import {OrderItemEntity} from '../../../../core/entities/order-item-entity';
-import {ToastService} from '../../../../support/services';
+import { Component, OnDestroy } from '@angular/core';
+import { MatDialog } from '@angular/material';
+import { OrderEntity } from '../../../../core/entities/order-entity';
+import { OrderService } from '../../../../core/services/order.service';
+import { map, switchMap, take, takeUntil } from 'rxjs/operators';
+import { ConfirmDialogComponent, OrderFormDialogComponent, OrderItemFormDialogComponent } from '../../../dialogs';
+import { ItemService } from '../../../../core/services';
+import { ItemEntity } from '../../../../core/entities/item-entity';
+import { EMPTY, interval, Subject } from 'rxjs';
+import { OrderItemEntity } from '../../../../core/entities/order-item-entity';
+import { ToastService } from '../../../../support/services';
 
 @Component({
     selector: 'app-orders-page',
@@ -45,12 +45,22 @@ export class OrdersPageComponent implements OnDestroy {
             .pipe(take(1))
             .subscribe(menus => this.menus = menus);
 
-        interval(10000).pipe(
-            takeUntil(this.destroyed$),
-            map(() => this.refresh())
-        ).subscribe();
+        // interval(10000).pipe(
+        //     takeUntil(this.destroyed$),
+        //     map(() => this.refresh())
+        // ).subscribe();
 
         this.refresh();
+        this.dialogService.open(
+            OrderItemFormDialogComponent,
+            {
+                data: {
+                    item: {},
+                    title: 'Adicionar Item'
+                },
+                panelClass: ['dialog-fullscreen', 'no-padding']
+            }
+        ).afterClosed().subscribe(console.log);
     }
 
     refresh() {

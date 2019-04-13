@@ -1,0 +1,108 @@
+<mat-vertical-stepper [linear]="true" #stepper>
+    <mat-step [stepControl]="form">
+        <form [formGroup]="form">
+            <ng-template matStepLabel>Selecione o item</ng-template>
+            <mat-form-field>
+                <mat-select formControlName="item_id" required placeholder="Selecione o item"
+                    (selectionChange)="stepper.next()">
+                    <mat-option>
+                        <ngx-mat-select-search (input)="filter($event)" [noEntriesFoundLabel]="'Nenhum item disponível'"
+                            placeholderLabel="Selecione o item">
+                            <mat-icon ngxMatSelectSearchClear (click)="clear()">
+                                close
+                            </mat-icon>
+                        </ngx-mat-select-search>
+                    </mat-option>
+                    <mat-option *ngFor="let item of filteredOptions" [value]="item.id">
+                        {{ item.description }} - {{ item.price | number:'1.2-2' }}R$
+                    </mat-option>
+                    <mat-option [disabled]="true" *ngIf="filteredOptions?.length === 0" [value]="null">
+                        Nenhum item disponível
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.get('item_id').hasError('required')">
+                    O campo item é <strong>obrigatório.</strong>
+                </mat-error>
+            </mat-form-field>
+        </form>
+    </mat-step>
+    <mat-step [stepControl]="form">
+        <form [formGroup]="form">
+            <ng-template matStepLabel>Qual a quantidade?</ng-template>
+            <mat-form-field>
+                <input matInput formControlName="quantity" type="number" min="1" inputmode="numeric">
+                <mat-error *ngIf="form.get('quantity').hasError('required')">
+                    O campo item é <strong>obrigatório.</strong>
+                </mat-error>
+            </mat-form-field>
+            <div>
+                <button mat-raised-button color="accent" matStepperNext>Ok</button>
+            </div>
+        </form>
+    </mat-step>
+    <mat-step [stepControl]="form">
+        <form [formGroup]="form">
+            <ng-template matStepLabel>Adicione as observações</ng-template>
+            <mat-form-field>
+                <textarea matInput formControlName="observation" type="text"></textarea>
+            </mat-form-field>
+            <div>
+                <button mat-raised-button color="accent" matStepperNext>
+                    {{ form.get('observation').value != null ? 'Ok' : 'Nenhuma observação' }}
+                </button>
+            </div>
+        </form>
+    </mat-step>
+    <mat-step [stepControl]="form">
+        <form [formGroup]="form">
+            <ng-template matStepLabel>Deseja aplicar algum desconto?</ng-template>
+            <mat-form-field>
+                <input matInput formControlName="discount" type="number" inputmode="numeric">
+            </mat-form-field>
+            <div>
+                <button mat-raised-button color="accent" matStepperNext>
+                    {{ form.get('discount').value != null ? 'Ok' : 'Não' }}</button>
+            </div>
+        </form>
+    </mat-step>
+    <mat-step [stepControl]="form">
+        <form [formGroup]="form" style="display: flex; flex-direction: column;">
+            <ng-template matStepLabel>Finalizar</ng-template>
+            <div style="display: flex; flex-direction: row;">
+                <mat-form-field style="width: 100%;  margin-right: 10px;">
+                    <input matInput placeholder="Item" type="text" [disabled]="true"
+                        [value]="form.get('item_id').value">
+                </mat-form-field>
+                <mat-form-field style="width: 100%;">
+                    <input matInput placeholder="Qtd." type="text" [disabled]="true"
+                        [value]="form.get('quantity').value">
+                </mat-form-field>
+            </div>
+
+            <div style="display: flex; flex-direction: row;">
+                <mat-form-field style="width: 100%; margin-right: 10px;">
+                    <input matInput placeholder="Total" type="text" [disabled]="true"
+                        [value]="(form.get('price')?.value - form.get('discount')?.value) | number: '1.2-2'">
+                    <span matSuffix>R$</span>
+                </mat-form-field>
+                <mat-form-field style="width: 30%;">
+                    <input matInput placeholder="Desconto" type="text" [disabled]="true"
+                        [value]="form.get('discount')?.value || 0 | number: '1.2-2'">
+                    <span matSuffix>R$</span>
+                </mat-form-field>
+            </div>
+
+            <mat-form-field style="width: 100%;" *ngIf="form.get('observation').value">
+                <input matInput placeholder="Observação" type="text" [disabled]="true"
+                    [value]="form.get('observation').value">
+            </mat-form-field>
+        </form>
+    </mat-step>
+</mat-vertical-stepper>
+<span class="spacer"></span>
+<mat-dialog-actions style="padding: 0 24px;">
+    <button mat-button (click)="cancel()">Cancelar</button>
+    <span style="flex: 1;"></span>
+    <button mat-button mat-raised-button [disabled]="form.invalid" color="accent" color="accent"
+        (click)="save()">Salvar</button>
+</mat-dialog-actions>

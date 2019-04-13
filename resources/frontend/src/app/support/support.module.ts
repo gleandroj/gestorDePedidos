@@ -37,6 +37,7 @@ import {
     MatProgressBarModule,
     MatProgressSpinnerModule,
     MatAutocompleteModule,
+    MatStepperModule,
     MatListModule, MatDatepickerModule, MatNativeDateModule
 } from '@angular/material';
 
@@ -71,7 +72,8 @@ const materialModules = [
     MatListModule,
     NgxMatSelectSearchModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatStepperModule
 ];
 
 const exportShared = [
