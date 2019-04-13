@@ -34,6 +34,15 @@ class OrderController extends Controller
         );
     }
 
+    protected function mapItemFn()
+    {
+        return function($item){
+            return array_merge($item, [
+                'discount' => $item['discount'] ?? 0
+            ]);
+        };;
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -43,7 +52,7 @@ class OrderController extends Controller
     public function store(CreateOrUpdateOrderRequest $request)
     {
         $order = new Order($request->only('table'));
-        tap($order)->save()->items()->createMany($request->get('items'));
+        tap($order)->save()->items()->createMany(collect($request->get('items'))->map($this->mapItemFn())->all());
         return new OrderResource($order->refresh());
     }
 
@@ -68,7 +77,6 @@ class OrderController extends Controller
     public function update(CreateOrUpdateOrderRequest $request, Order $order)
     {
         $data = $request->except('items');
-        $items = $request->get('items');
         $isDone = $request->get('is_done', false);
         if ($isDone) {
             $data['finalized_at'] = Carbon::now();
@@ -76,7 +84,7 @@ class OrderController extends Controller
             $data['finalized_at'] = null;
         }
         $order->update(array_except($data, ['is_done']));
-        foreach ($items as $item) {
+        collect($request->get('items'))->map($this->mapItemFn())->each(function($item){
             if (!empty($item['is_done']) && $item['is_done'] || $isDone) {
                 $item['finalized_at'] = Carbon::now();
             } else {
@@ -85,7 +93,7 @@ class OrderController extends Controller
             $order->items()->updateOrCreate([
                 'id' => $item['id'] ?? null
             ], array_except($item, ['is_done']));
-        }
+        });
         return new OrderResource($order->refresh());
     }
 

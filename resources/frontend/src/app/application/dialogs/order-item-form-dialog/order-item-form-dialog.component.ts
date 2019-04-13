@@ -7,6 +7,13 @@ import { ItemEntity } from '../../../core/entities/item-entity';
 import { ItemService } from '../../../core/services';
 import { Subject } from 'rxjs';
 import { takeUntil, distinctUntilChanged } from 'rxjs/operators';
+import { OrderItemEntity } from '../../../core/entities/order-item-entity';
+
+interface DialogOptions {
+    title?: string;
+    item?: OrderItemEntity;
+    items?: ItemEntity[];
+}
 
 @Component({
     selector: 'app-order-item-form-dialog',
@@ -16,30 +23,13 @@ import { takeUntil, distinctUntilChanged } from 'rxjs/operators';
     ],
 })
 export class OrderItemFormDialogComponent implements OnDestroy {
-    _loading = false;
     editMode = false;
     title = 'Formulário';
     form: FormGroup;
     allItems: ItemEntity[] = [];
-    errors: {
-        [key: string]: string[]
-    } = {};
+    item: Partial<OrderItemEntity>;
     filteredOptions: ItemEntity[] = [];
-    private $destroyed = new Subject();
-
-    get loading() {
-        return this._loading;
-    }
-
-    set loading(isLoading) {
-        if (isLoading && !!this.form) {
-            this.form.disable();
-        } else if (!!this.form) {
-            this.form.enable();
-        }
-
-        this._loading = isLoading;
-    }
+    $destroyed = new Subject();
 
     constructor(
         public orderService: OrderService,
@@ -47,19 +37,21 @@ export class OrderItemFormDialogComponent implements OnDestroy {
         public dialogRef: MatDialogRef<OrderItemFormDialogComponent>,
         public toastr: ToastService,
         public changeRef: ChangeDetectorRef,
-        @Inject(MAT_DIALOG_DATA) public data: any,
+        @Inject(MAT_DIALOG_DATA) public data: DialogOptions,
         fb: FormBuilder
     ) {
-        this.editMode = true;
-        const item: any = null;
+        this.editMode = !!(data.item && data.item.id);
+        this.item = data.item || {};
+        this.allItems = data.items || [];
+        this.filteredOptions = this.allItems.slice();
         this.form = fb.group({
-            id: [item ? item.id : null],
-            quantity: [item ? item.quantity : 1, Validators.required],
-            price: [item ? item.price : 0, Validators.required],
-            cost: [item ? item.cost : 0, Validators.required],
-            discount: [item ? item.discount : null],
-            item_id: [item ? item.item_id : null, Validators.required],
-            observation: item ? item.observation : null
+            id: [this.item.id || null],
+            quantity: [this.item.quantity || 1, Validators.required],
+            price: [this.item.price || 0, Validators.required],
+            cost: [this.item.cost || 0, Validators.required],
+            discount: [this.item.discount || null],
+            item_id: [this.item.item_id || null, Validators.required],
+            observation: this.item.observation || null
         });
         this.form.valueChanges
             .pipe(
@@ -67,12 +59,14 @@ export class OrderItemFormDialogComponent implements OnDestroy {
                 distinctUntilChanged()
             )
             .subscribe((value) => this.computePrice(value));
-        this.loading = true;
-        this.itemService.all().subscribe(items => {
-            this.allItems = items;
-            this.filteredOptions = this.allItems.slice();
-            this.loading = false;
-        });
+    }
+
+    log(event) {
+        console.log(event);
+    }
+
+    getItemById(id) {
+        return this.allItems.find(i => i.id === id);
     }
 
     filter(event: any) {
@@ -112,11 +106,7 @@ export class OrderItemFormDialogComponent implements OnDestroy {
         this.dialogRef.close(false);
     }
 
-    hasError(key: string) {
-        return this.errors[key] && this.errors[key].length > 0;
-    }
-
-    getError(key: string) {
-        return this.hasError(key) ? this.errors[key][0] : '';
+    save() {
+        this.dialogRef.close(this.form.value);
     }
 }

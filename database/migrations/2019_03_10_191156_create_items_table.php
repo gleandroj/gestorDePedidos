@@ -17,7 +17,7 @@ class CreateItemsTable extends Migration
             $table->increments('id');
             $table->string('description');
             $table->double('price');
-            $table->double('cost');
+            $table->double('cost')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

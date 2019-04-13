@@ -17,9 +17,9 @@ class CreateOrderItemsTable extends Migration
             $table->increments('id');
             $table->string('observation')->nullable();
             $table->integer('quantity')->default(1);
-            $table->integer('price');
-            $table->integer('cost');
-            $table->integer('discount');
+            $table->double('price');
+            $table->double('cost');
+            $table->double('discount')->default(0);
             $table->unsignedInteger('order_id');
             $table->foreign('order_id')->references('id')->on('orders');
             $table->unsignedInteger('item_id');

@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material';
 import { OrderEntity } from '../../../../core/entities/order-entity';
 import { OrderService } from '../../../../core/services/order.service';
 import { map, switchMap, take, takeUntil } from 'rxjs/operators';
-import { ConfirmDialogComponent, OrderFormDialogComponent, OrderItemFormDialogComponent } from '../../../dialogs';
+import { ConfirmDialogComponent, OrderFormDialogComponent, OrderItemFormDialogComponent, CloseOrderFormDialogComponent } from '../../../dialogs';
 import { ItemService } from '../../../../core/services';
 import { ItemEntity } from '../../../../core/entities/item-entity';
 import { EMPTY, interval, Subject } from 'rxjs';
@@ -45,22 +45,13 @@ export class OrdersPageComponent implements OnDestroy {
             .pipe(take(1))
             .subscribe(menus => this.menus = menus);
 
+        //TODO:
         // interval(10000).pipe(
         //     takeUntil(this.destroyed$),
         //     map(() => this.refresh())
         // ).subscribe();
 
         this.refresh();
-        this.dialogService.open(
-            OrderItemFormDialogComponent,
-            {
-                data: {
-                    item: {},
-                    title: 'Adicionar Item'
-                },
-                panelClass: ['dialog-fullscreen', 'no-padding']
-            }
-        ).afterClosed().subscribe(console.log);
     }
 
     refresh() {
@@ -79,33 +70,53 @@ export class OrdersPageComponent implements OnDestroy {
         return items.filter(item => showFinalized ? true : !item.is_done);
     }
 
-    ngOnDestroy(): void {
-        this.destroyed$.next();
-        this.destroyed$.complete();
+    markItemAsDone(order: OrderEntity, item: OrderItemEntity) {
+        item.is_done = !item.is_done;
+        this.orderService.save(order).subscribe();
     }
 
-    markAsDone($event: any, order: OrderEntity) {
+    editItem(item: OrderItemEntity, order: OrderEntity, title: string) {
+        this.dialogService.open(
+            OrderItemFormDialogComponent,
+            {
+                data: {
+                    item: item,
+                    title: title,
+                    items: this.menus
+                },
+                panelClass: ['dialog-fullscreen', 'no-padding']
+            }
+        ).afterClosed().subscribe((updated) => {
+            if (updated && updated.id) {
+                Object.assign(item, updated);
+                this.orderService.save(order).subscribe();
+            } else if (updated && !updated.id) {
+                order.items = [updated].concat(order.items);
+                this.orderService.save(order).subscribe();
+            }
+        });
+    }
+
+    removeItem(item: OrderItemEntity, order: OrderEntity) {
+        console.log('remote item');
+        console.log(item);
+    }
+
+    markAsDone(order: OrderEntity) {
         if (order.is_done) {
             order.items.forEach(i => i.is_done = true);
         }
         this.orderService.save(order).subscribe();
     }
 
-    markItemAsDone($event, order: OrderEntity, item: OrderItemEntity) {
-        item.is_done = !item.is_done;
-        this.orderService.save(order).subscribe();
-    }
-
-    edit(order?: OrderEntity | any, title?: string, event?: Event) {
-        if (event) {
-            event.stopPropagation();
-        }
+    edit(order?: OrderEntity | any, title?: string) {
         this.dialogService.open(
             OrderFormDialogComponent,
             {
                 data: {
                     order: order,
-                    title: title
+                    title: title,
+                    items: this.menus
                 },
                 panelClass: 'dialog-fullscreen'
             }
@@ -132,8 +143,7 @@ export class OrdersPageComponent implements OnDestroy {
             {
                 data: {
                     message: 'Tem certeza que deseja cancelar?'
-                },
-                panelClass: 'dialog-fullscreen'
+                }
             }
         )
             .afterClosed()
@@ -148,5 +158,25 @@ export class OrdersPageComponent implements OnDestroy {
                     this.toastr.open('Pedido cancelado com sucesso!');
                 }
             });
+    }
+
+    close(order: OrderEntity) {
+        this.dialogService.open(
+            CloseOrderFormDialogComponent,
+            {
+                data: {
+                    order: order,
+                    items: this.menus
+                },
+                panelClass: 'dialog-fullscreen'
+            }
+        ).afterClosed().subscribe((data: OrderEntity) => {
+            console.log(data);
+        });
+    }
+
+    ngOnDestroy(): void {
+        this.destroyed$.next();
+        this.destroyed$.complete();
     }
 }
