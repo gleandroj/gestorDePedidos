@@ -84,7 +84,7 @@ class OrderController extends Controller
             $data['finalized_at'] = null;
         }
         $order->update(array_except($data, ['is_done']));
-        collect($request->get('items'))->map($this->mapItemFn())->each(function($item){
+        collect($request->get('items'))->map($this->mapItemFn())->each(function($item) use($isDone, $order) {
             if (!empty($item['is_done']) && $item['is_done'] || $isDone) {
                 $item['finalized_at'] = Carbon::now();
             } else {

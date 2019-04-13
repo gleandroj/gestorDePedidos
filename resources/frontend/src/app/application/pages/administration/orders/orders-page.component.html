@@ -50,8 +50,8 @@
                     <button mat-menu-item (click)="editItem({}, order, 'Adicionar Item')">
                         Adicionar Item
                     </button>
-                    <button mat-menu-item (click)="close(order)">
-                        Fechar mesa
+                    <button mat-menu-item (click)="finalizeOrOpen(order, !order.is_done)">
+                        {{ order.is_done ? 'Reabrir' : 'Fechar' }} mesa
                     </button>
                     <button mat-menu-item (click)="edit(order, 'Editar Pedido')">
                         Editar mesa

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnDestroy } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material';
 import { FormArray, FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { ToastService } from '../../../support/services';
@@ -9,7 +9,6 @@ import { OrderService } from '../../../core/services/order.service';
 import { ItemEntity } from '../../../core/entities/item-entity';
 import { ItemService } from '../../../core/services';
 import { OrderItemEntity } from '../../../core/entities/order-item-entity';
-import { distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { OrderItemFormDialogComponent } from '../order-item-form-dialog/order-item-form-dialog.component';
 
@@ -33,8 +32,7 @@ export class OrderFormDialogComponent implements OnDestroy {
     form: FormGroup;
     order: Partial<OrderEntity>;
     allItems: ItemEntity[] = [];
-    filteredOptions: { [key: number]: ItemEntity[] } = {};
-    private $destroyed = new Subject();
+    $destroyed = new Subject();
 
     get loading() {
         return this._loading;

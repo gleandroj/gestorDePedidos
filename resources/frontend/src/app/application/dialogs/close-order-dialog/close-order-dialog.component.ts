@@ -1,9 +1,7 @@
 import { ChangeDetectorRef, Component, Inject, OnDestroy } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { FormGroup } from '@angular/forms';
 import { ToastService } from '../../../support/services';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ApiException } from '../../../support/interfaces/api-exception';
 import { OrderEntity } from '../../../core/entities/order-entity';
 import { OrderService } from '../../../core/services/order.service';
 import { ItemEntity } from '../../../core/entities/item-entity';
@@ -24,28 +22,10 @@ interface DialogOptions {
     ],
 })
 export class CloseOrderFormDialogComponent implements OnDestroy {
-    _loading = false;
-    editMode = false;
-    title = 'Formulário';
-    form: FormGroup;
+    loading = false;
     order: Partial<OrderEntity>;
     allItems: ItemEntity[] = [];
-    filteredOptions: { [key: number]: ItemEntity[] } = {};
-    private $destroyed = new Subject();
-
-    get loading() {
-        return this._loading;
-    }
-
-    set loading(isLoading) {
-        if (isLoading) {
-            this.form.disable();
-        } else {
-            this.form.enable();
-        }
-
-        this._loading = isLoading;
-    }
+    $destroyed = new Subject();
 
     constructor(
         public orderService: OrderService,
@@ -55,9 +35,8 @@ export class CloseOrderFormDialogComponent implements OnDestroy {
         public changeRef: ChangeDetectorRef,
         @Inject(MAT_DIALOG_DATA) public data: DialogOptions
     ) {
-        this.order = data.order || {};
+        this.order = data.order ? Object.assign({}, data.order) : {};
         this.allItems = data.items || [];
-        this.editMode = !!data.order;
     }
 
     get items() {
@@ -76,7 +55,9 @@ export class CloseOrderFormDialogComponent implements OnDestroy {
     }
 
     save() {
-        this.loading = true;
+        this.order.is_done = this.loading = true;
+        this.order.items.forEach(i => i.is_done = true);
+
         this.orderService.save(this.order).subscribe((order) => {
             this.loading = false;
             this.toastr.open(

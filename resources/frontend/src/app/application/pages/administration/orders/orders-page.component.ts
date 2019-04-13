@@ -2,11 +2,11 @@ import { Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { OrderEntity } from '../../../../core/entities/order-entity';
 import { OrderService } from '../../../../core/services/order.service';
-import { map, switchMap, take, takeUntil } from 'rxjs/operators';
+import { switchMap, take, takeUntil } from 'rxjs/operators';
 import { ConfirmDialogComponent, OrderFormDialogComponent, OrderItemFormDialogComponent, CloseOrderFormDialogComponent } from '../../../dialogs';
 import { ItemService } from '../../../../core/services';
 import { ItemEntity } from '../../../../core/entities/item-entity';
-import { EMPTY, interval, Subject } from 'rxjs';
+import { EMPTY, Subject } from 'rxjs';
 import { OrderItemEntity } from '../../../../core/entities/order-item-entity';
 import { ToastService } from '../../../../support/services';
 
@@ -102,13 +102,6 @@ export class OrdersPageComponent implements OnDestroy {
         console.log(item);
     }
 
-    markAsDone(order: OrderEntity) {
-        if (order.is_done) {
-            order.items.forEach(i => i.is_done = true);
-        }
-        this.orderService.save(order).subscribe();
-    }
-
     edit(order?: OrderEntity | any, title?: string) {
         this.dialogService.open(
             OrderFormDialogComponent,
@@ -160,19 +153,26 @@ export class OrdersPageComponent implements OnDestroy {
             });
     }
 
-    close(order: OrderEntity) {
-        this.dialogService.open(
-            CloseOrderFormDialogComponent,
-            {
-                data: {
-                    order: order,
-                    items: this.menus
-                },
-                panelClass: 'dialog-fullscreen'
-            }
-        ).afterClosed().subscribe((data: OrderEntity) => {
-            console.log(data);
-        });
+    finalizeOrOpen(order: OrderEntity, done: boolean) {
+        if (!done) {
+            order.is_done = done;
+            this.orderService.save(order).subscribe();
+        } else {
+            this.dialogService.open(
+                CloseOrderFormDialogComponent,
+                {
+                    data: {
+                        order: order,
+                        items: this.menus
+                    },
+                    panelClass: 'dialog-fullscreen'
+                }
+            ).afterClosed().subscribe((finalized: OrderEntity) => {
+                if (finalized) {
+                    Object.assign(order, finalized);
+                }
+            });
+        }
     }
 
     ngOnDestroy(): void {
