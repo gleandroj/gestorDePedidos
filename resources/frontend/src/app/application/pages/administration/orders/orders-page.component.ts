@@ -2,11 +2,11 @@ import { Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { OrderEntity } from '../../../../core/entities/order-entity';
 import { OrderService } from '../../../../core/services/order.service';
-import { switchMap, take, takeUntil } from 'rxjs/operators';
+import { switchMap, take, takeUntil, map } from 'rxjs/operators';
 import { ConfirmDialogComponent, OrderFormDialogComponent, OrderItemFormDialogComponent, CloseOrderFormDialogComponent } from '../../../dialogs';
 import { ItemService } from '../../../../core/services';
 import { ItemEntity } from '../../../../core/entities/item-entity';
-import { EMPTY, Subject } from 'rxjs';
+import { EMPTY, Subject, interval } from 'rxjs';
 import { OrderItemEntity } from '../../../../core/entities/order-item-entity';
 import { ToastService } from '../../../../support/services';
 
@@ -45,11 +45,10 @@ export class OrdersPageComponent implements OnDestroy {
             .pipe(take(1))
             .subscribe(menus => this.menus = menus);
 
-        //TODO:
-        // interval(10000).pipe(
-        //     takeUntil(this.destroyed$),
-        //     map(() => this.refresh())
-        // ).subscribe();
+        interval(10000).pipe(
+            takeUntil(this.destroyed$),
+            map(() => this.refresh())
+        ).subscribe();
 
         this.refresh();
     }
@@ -59,7 +58,16 @@ export class OrdersPageComponent implements OnDestroy {
             .pipe(
                 take(1)
             )
-            .subscribe(orders => this.orders = orders);
+            .subscribe(orders => {
+                orders.forEach(order => {
+                    const local = this.orders.find(o => o.id === order.id);
+                    if (local) {
+                        Object.assign(local, order);
+                    } else {
+                        this.orders.push(order);
+                    }
+                });
+            });
     }
 
     menuById(id: number) {
