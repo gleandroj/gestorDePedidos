@@ -10,7 +10,10 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::get('/', function () {
-    return view('app');
+Route::fallback(function () {
+    $patch = request()->path();
+    if (preg_match('/api/', $patch)) {
+        abort(404, 'O recurso solicitado não está disponível.');
+    }
+    return redirect("/app/#/{$patch}");
 });

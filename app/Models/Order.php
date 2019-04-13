@@ -8,13 +8,10 @@ class Order extends AbstractModel
 {
     protected $fillable = [
         'table',
-        'is_done',
         'finalized_at'
     ];
 
-    protected $casts = [
-        'is_done' => 'boolean'
-    ];
+    protected $casts = [];
 
     protected $dates = [
         'finalized_at',

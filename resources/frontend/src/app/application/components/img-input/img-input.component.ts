@@ -20,7 +20,7 @@ export class ImgInputComponent implements ControlValueAccessor {
     @Input() public label = '';
     @Input() public isDisabled: boolean;
 
-    public fallbackImage = '/dist/assets/img/avatars/avatar1.jpg';
+    public fallbackImage = 'assets/img/avatars/avatar1.jpg';
     public imageUploadData: string = null;
 
     @ViewChild('imgFileInput')

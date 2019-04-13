@@ -7,7 +7,6 @@ class OrderItem extends AbstractModel
 
     protected $fillable = [
         'observation',
-        'is_done',
         'quantity',
         'price',
         'cost',
@@ -17,9 +16,7 @@ class OrderItem extends AbstractModel
         'finalized_at'
     ];
 
-    protected $casts = [
-        'is_done' => 'boolean'
-    ];
+    protected $casts = [];
 
     protected $dates = [
         'finalized_at'

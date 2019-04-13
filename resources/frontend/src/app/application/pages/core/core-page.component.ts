@@ -41,7 +41,7 @@ export class CorePageComponent implements OnDestroy {
     ) {
         this.iconRegistry.addSvgIcon(
             'fastfood-svg',
-            this.sanitizer.bypassSecurityTrustResourceUrl('/dist/assets/icons/fastfood.svg')
+            this.sanitizer.bypassSecurityTrustResourceUrl('assets/icons/fastfood.svg')
         );
         this.watcher = this.media.subscribe((change: MediaChange) => this.onMediaChange(change.mqAlias));
         this.auth.currentUserSubject.subscribe(user => this.user = user);

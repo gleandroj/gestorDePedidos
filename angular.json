@@ -18,9 +18,9 @@
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "extractCss": true,
-            "deployUrl": "/dist/",
-            "outputPath": "public/dist",
-            "index": "resources/views/app.blade.php",
+            "baseHref": "/app/",
+            "outputPath": "public/app",
+            "index": "resources/frontend/src/index.html",
             "main": "resources/frontend/src/main.ts",
             "polyfills": "resources/frontend/src/polyfills.ts",
             "tsConfig": "resources/frontend/src/tsconfig.app.json",
@@ -64,7 +64,11 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "frontend:build"
+            "browserTarget": "frontend:build",
+            "baseHref": "/",
+            "port": 8080,
+            "host": "0.0.0.0",
+            "proxyConfig": "proxy.config.json"
           },
           "configurations": {
             "production": {
@@ -78,23 +82,6 @@
             "browserTarget": "frontend:build"
           }
         },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "resources/frontend/src/test.ts",
-            "polyfills": "resources/frontend/src/polyfills.ts",
-            "tsConfig": "resources/frontend/src/tsconfig.spec.json",
-            "karmaConfig": "resources/frontend/src/karma.conf.js",
-            "styles": [
-              "resources/frontend/src/styles.less"
-            ],
-            "scripts": [],
-            "assets": [
-              "resources/frontend/src/favicon.ico",
-              "resources/frontend/src/assets"
-            ]
-          }
-        },
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
@@ -102,33 +89,6 @@
               "resources/frontend/src/tsconfig.app.json",
               "resources/frontend/src/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
-        }
-      }
-    },
-    "frontend-e2e": {
-      "root": "resources/frontend/e2e/",
-      "projectType": "application",
-      "architect": {
-        "e2e": {
-          "builder": "@angular-devkit/build-angular:protractor",
-          "options": {
-            "protractorConfig": "resources/frontend/e2e/protractor.conf.js",
-            "devServerTarget": "frontend:serve"
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "frontend:serve:production"
-            }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": "resources/frontend/e2e/tsconfig.e2e.json",
             "exclude": [
               "**/node_modules/**"
             ]
