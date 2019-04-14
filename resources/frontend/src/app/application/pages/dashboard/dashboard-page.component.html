@@ -29,7 +29,7 @@
     </button>
 </div>
 <div style="display: flex; flex-direction: row; justify-content: space-between; flex-wrap: wrap;">
-    <mat-card fxFlex.lt-sm="100" fxFlex.gt-sm="19" class="indicator-card mat-typography text-center push-20">
+    <mat-card fxFlex.lt-sm="100" fxFlex.gt-sm="19" class="indicator-card mat-typography text-center push-10">
         <div class="push-10">
             <span class="mat-display-1">{{ data.orders_count | number: '1.0' }}</span>
         </div>
@@ -39,7 +39,7 @@
         </div>
     </mat-card>
 
-    <mat-card fxFlex.lt-sm="100" fxFlex.gt-sm="19" class="indicator-card mat-typography text-center push-20">
+    <mat-card fxFlex.lt-sm="100" fxFlex.gt-sm="19" class="indicator-card mat-typography text-center push-10">
         <div class="push-10">
             <span class="mat-display-1">{{ data.balance | number: '1.2-2' }}R$</span>
         </div>
@@ -49,7 +49,7 @@
         </div>
     </mat-card>
 
-    <mat-card fxFlex.lt-sm="100" fxFlex.gt-sm="19" class="indicator-card mat-typography text-center push-20">
+    <mat-card fxFlex.lt-sm="100" fxFlex.gt-sm="19" class="indicator-card mat-typography text-center push-10">
         <div class="push-10">
             <span class="mat-display-1">{{ data.cost | number: '1.2-2' }}R$</span>
         </div>
@@ -59,7 +59,7 @@
         </div>
     </mat-card>
 
-    <mat-card fxFlex.lt-sm="100" fxFlex.gt-sm="19" class="indicator-card mat-typography text-center push-20">
+    <mat-card fxFlex.lt-sm="100" fxFlex.gt-sm="19" class="indicator-card mat-typography text-center push-10">
         <div class="push-10">
             <span class="mat-display-1">{{ data.discount | number: '1.2-2' }}R$</span>
         </div>
@@ -69,7 +69,7 @@
         </div>
     </mat-card>
 
-    <mat-card fxFlex.lt-sm="100" fxFlex.gt-sm="19" class="indicator-card mat-typography text-center push-20">
+    <mat-card fxFlex.lt-sm="100" fxFlex.gt-sm="19" class="indicator-card mat-typography text-center push-10">
         <div class="push-10">
             <span class="mat-display-1">{{ data.cancelled_count | number: '1.0' }}</span>
         </div>
@@ -79,20 +79,20 @@
         </div>
     </mat-card>
 </div>
-<div style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: space-between;">
-    <mat-card class="push-20" fxFlex.lt-sm="100" fxFlex.gt-sm="30"
+<div style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: space-between; height: 100%">
+    <mat-card class="push-10" fxFlex.lt-sm="100" fxFlex.gt-sm="30"
               style="display: flex; flex-direction: column;">
         <mat-card-header>
-            <mat-card-title>Top 5 Itens</mat-card-title>
+            <mat-card-title>Top Itens</mat-card-title>
         </mat-card-header>
-        <table mat-table [dataSource]="data.top_five">
+        <table mat-table [dataSource]="paginator.data">
             <ng-container matColumnDef="position">
                 <th mat-header-cell *matHeaderCellDef> No.</th>
-                <td mat-cell *matCellDef="let element"> {{element.position}} </td>
+                <td mat-cell *matCellDef="let element; let i = index"> {{ i + 1 }} </td>
             </ng-container>
             <ng-container matColumnDef="description">
                 <th mat-header-cell *matHeaderCellDef> Item</th>
-                <td mat-cell *matCellDef="let element"> {{element.item_description}} </td>
+                <td mat-cell *matCellDef="let element"> {{element.item}} </td>
             </ng-container>
             <ng-container matColumnDef="quantity">
                 <th mat-header-cell *matHeaderCellDef> Qtd.</th>
@@ -101,12 +101,17 @@
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
         </table>
-        <div class="mat-typography text-center push-10-t" *ngIf="data.top_five?.length === 0">
+        <span style="flex: 1"></span>
+        <div class="mat-typography text-center push-10-t absolute-center" *ngIf="paginator.data?.length === 0">
             Nenhum item disponível
         </div>
+        <mat-paginator (page)="processPaginate(($event.pageIndex + 1), $event.pageSize)"
+                       [length]="paginator.meta.total" [pageSize]="5"
+                       [pageSizeOptions]="[5]">
+        </mat-paginator>
     </mat-card>
     <mat-card fxFlex.lt-sm="100" fxFlex.gt-sm="69"
-              class="push-20"
+              class="push-10"
               style="display: flex; flex-direction: column;">
         <mat-card-header>
             <mat-card-title>Relação</mat-card-title>

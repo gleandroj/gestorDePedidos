@@ -40,6 +40,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::pattern('order', '[0-9]+');
     Route::apiResource('orders', 'Order\OrderController');
 
+    Route::get('dashboard', 'Dashboard\DashboardController@top');
     Route::post('dashboard/data', 'Dashboard\DashboardController@data');
 });
 

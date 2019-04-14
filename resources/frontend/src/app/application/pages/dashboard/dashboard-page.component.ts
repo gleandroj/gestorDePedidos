@@ -3,8 +3,10 @@ import {Subject} from 'rxjs';
 import {ToastService} from '../../../support/services';
 import {MatDialog} from '@angular/material';
 import * as Highcharts from 'highcharts';
-import {HttpClient} from '@angular/common/http';
-
+import {AbstractTableComponent} from '../../components';
+import {DashboardService} from '../../../core/services';
+import {take} from 'rxjs/internal/operators/take';
+import {tap} from 'rxjs/internal/operators/tap';
 
 @Component({
     selector: 'app-dashboard-page',
@@ -13,34 +15,40 @@ import {HttpClient} from '@angular/common/http';
         './dashboard-page.component.less'
     ],
 })
-export class DashboardPageComponent implements OnDestroy, AfterViewInit {
+export class DashboardPageComponent extends AbstractTableComponent<any> implements OnDestroy, AfterViewInit {
 
     chart: Highcharts.Chart;
     @ViewChild('container') public container: ElementRef<HTMLDivElement>;
     public loading = false;
     private destroyed$ = new Subject();
-    public filter = {
-        group: 'day',
-        interval: [new Date(), new Date()]
-    };
     public data = {
         balance: 0,
         cancelled_count: 0,
         chart: {labels: [], series: [], format: '{value:%d/%m/%Y}'},
         cost: 0,
         discount: 0,
-        orders_count: 0,
-        top_five: []
+        orders_count: 0
     };
 
     displayedColumns: string[] = ['position', 'description', 'quantity'];
 
     public constructor(
         private toastr: ToastService,
-        private http: HttpClient,
-        private dialogService: MatDialog
+        private dashboardService: DashboardService,
+        dialogService: MatDialog
     ) {
+        super(dialogService, {group: 'day', interval: [new Date(), new Date()] });
         this.refresh();
+    }
+
+
+    public paginate(page?, perPage?, sortable?, filter?) {
+        return this.dashboardService.paginate(
+            page,
+            perPage,
+            sortable,
+            filter
+        );
     }
 
     ngAfterViewInit(): void {
@@ -109,16 +117,16 @@ export class DashboardPageComponent implements OnDestroy, AfterViewInit {
     }
 
     refresh() {
-        this.http.post('/api/dashboard/data', this.filter)
-            .subscribe((data: any) => {
-                this.data = data;
-                this.createChart();
-            });
+        super.refresh();
+        this.dashboardService.data(this.filter).pipe(
+            take(1),
+            tap(data => this.data = data),
+            tap(() => this.createChart())
+        ).subscribe();
     }
 
     ngOnDestroy(): void {
         this.destroyed$.next();
         this.destroyed$.complete();
     }
-
 }

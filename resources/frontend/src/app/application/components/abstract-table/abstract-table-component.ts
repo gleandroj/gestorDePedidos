@@ -16,24 +16,15 @@ export abstract class AbstractTableComponent<T> implements OnInit {
         },
         data: []
     };
-
-    public get filter() {
-        return {
-            query: this.searchSubject.getValue()
-        };
-    }
-
+    public filter: any = {};
     public abstract displayedColumns: string[];
-
     public loading = true;
-
     public searchSubject = new BehaviorSubject(null);
-
     public sortable: { key: string; direction: 'asc' | 'desc' } = null;
 
-    public constructor(protected dialogService: MatDialog) {
+    public constructor(protected dialogService: MatDialog, initialFilter: any = {}) {
+        Object.assign(this.filter, initialFilter);
     }
-
 
     public abstract paginate(page?, perPage?, sortable?, filter?): Observable<PaginatorData<T>>;
 
@@ -49,9 +40,9 @@ export abstract class AbstractTableComponent<T> implements OnInit {
         ).afterClosed();
     }
 
-    public processPaginate(page?, perPage?, sortable?, filter?) {
+    public processPaginate(page?, perPage?) {
         this.loading = true;
-        this.paginate(page, perPage, sortable, filter)
+        this.paginate(page, perPage, this.sortable, this.filter)
             .pipe(tap(() => this.loading = false, () => this.loading = false))
             .subscribe((data) => this.paginator = data);
     }
@@ -59,13 +50,16 @@ export abstract class AbstractTableComponent<T> implements OnInit {
     public ngOnInit(): void {
         this.searchSubject.pipe(
             debounceTime(500),
-            distinctUntilChanged()
-        ).subscribe(() => this.processPaginate(
+            distinctUntilChanged(),
+            tap((val) => this.filter.query = val)
+        ).subscribe(() => this.refresh());
+    }
+
+    public refresh() {
+        this.processPaginate(
             this.paginator.meta.current_page,
-            this.paginator.meta.per_page,
-            this.sortable,
-            this.filter
-        ));
+            this.paginator.meta.per_page
+        );
     }
 
     public sortData($event) {
@@ -78,9 +72,7 @@ export abstract class AbstractTableComponent<T> implements OnInit {
         }
         this.processPaginate(
             this.paginator.meta.current_page,
-            this.paginator.meta.per_page,
-            this.sortable,
-            this.filter
+            this.paginator.meta.per_page
         );
     }
 

@@ -51,7 +51,7 @@
         </div>
         <img class="img-responsive" src="assets/img/empty-state.png">
     </ng-container>
-    <mat-paginator (page)="processPaginate(($event.pageIndex + 1), $event.pageSize, filter)"
+    <mat-paginator (page)="processPaginate(($event.pageIndex + 1), $event.pageSize)"
                    [length]="paginator.meta.total" [pageSize]="paginator.meta.per_page"
                    [pageSizeOptions]="[5, 10, 25, 100]">
     </mat-paginator>

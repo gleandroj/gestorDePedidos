@@ -1,3 +1,19 @@
+:host {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+
+  /deep/ .mat-row {
+    height: 45px;
+  }
+
+  .absolute-center {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+  }
+}
+
 .indicator-card {
   padding: 25px 30px;
   min-width: 230px;

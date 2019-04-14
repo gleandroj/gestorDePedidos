@@ -9,6 +9,7 @@
 namespace Bufallus\Http\Controllers\Dashboard;
 
 use Bufallus\Http\Controllers\Controller;
+use Bufallus\Http\Resources\TopItemResource;
 use Bufallus\Models\Item;
 use Bufallus\Models\Order;
 use Bufallus\Models\OrderItem;
@@ -21,6 +22,9 @@ use Illuminate\Support\Facades\DB;
  */
 class DashboardController extends Controller
 {
+    /**
+     * @return array
+     */
     public function data()
     {
         $interval = $this->parseInterval(request('interval', []));
@@ -43,20 +47,6 @@ class DashboardController extends Controller
                 'sum(case when deleted_at is not null then 1 else 0 end) as cancelled'
             ]))
             ->first();
-
-        $topFive = OrderItem::query()
-            ->with('item')
-            ->whereBetween('created_at', $interval)
-            ->selectRaw(join(',', [
-                'item_id',
-                'count(item_id) as count'
-            ]))
-            ->groupBy([
-                'item_id'
-            ])
-            ->orderByRaw('2 desc')
-            ->take(5)
-            ->get();
 
         $groupBy = request('group', 'day');
 
@@ -85,14 +75,6 @@ class DashboardController extends Controller
             return floatval($data);
         };
         return [
-            'top_five' => $topFive->map(function ($itemComputed, $index) {
-                return [
-                    'position' => $index + 1,
-                    'item_id' => $itemComputed->item_id,
-                    'count' => $itemComputed->count,
-                    'item_description' => $itemComputed->item->description
-                ];
-            })->all(),
             'orders_count' => $counts['orders'] ?? 0,
             'cancelled_count' => $counts['cancelled'] ?? 0,
             'balance' => $computed['balance'] ?? 0,
@@ -144,5 +126,29 @@ class DashboardController extends Controller
                 ]
             ]
         ];
+    }
+
+    /**
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     */
+    public function top()
+    {
+        $filter = request('filter', []);
+        $interval = $this->parseInterval(array_get($filter, 'interval', []));
+        $interval[0] = $interval[0] ?? Carbon::now()->startOfDay();
+        $interval[1] = $interval[1] ?? Carbon::now()->endOfDay();
+
+        return TopItemResource::collection(OrderItem::query()
+            ->with('item')
+            ->whereBetween('created_at', $interval)
+            ->selectRaw(join(',', [
+                'item_id',
+                'count(item_id) as count'
+            ]))
+            ->groupBy([
+                'item_id'
+            ])
+            ->orderByRaw('2 desc')
+            ->paginate(5));
     }
 }
