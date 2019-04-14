@@ -22,6 +22,7 @@ html, body {
   position: relative;
   vertical-align: middle;
   align-items: center;
+
   mat-icon {
     margin-right: 10px;
   }
@@ -34,6 +35,7 @@ mat-expansion-panel {
   &.even {
     //background: transparent;
   }
+
   &.odd {
     //background: white;
   }
@@ -84,6 +86,10 @@ mat-expansion-panel {
   text-align: center !important;
 }
 
+.text-right {
+  text-align: right !important;
+}
+
 .circular--landscape {
   display: inline-block;
   position: relative;
@@ -91,6 +97,7 @@ mat-expansion-panel {
   height: 70px;
   overflow: hidden;
   border-radius: 50%;
+
   img {
     width: auto;
     height: 100%;
@@ -103,14 +110,30 @@ mat-expansion-panel {
   height: 40px !important;
 }
 
+.dialog-fullscreen {
+  position: absolute !important;
+}
+
+.dialog-receipt {
+  position: absolute !important;
+  max-width: 90vw !important;
+}
+
+.no-border-radius {
+  .mat-dialog-container {
+    border-radius: 0 !important;
+  }
+}
+
 @media screen and (max-width: @screen-sm-max) {
   .dialog-fullscreen {
     width: 100%;
     height: 100%;
     min-width: 100%;
-    &.no-padding{
-      .mat-dialog-container{
-        padding:0 0 24px !important;
+
+    &.no-padding {
+      .mat-dialog-container {
+        padding: 0 0 24px !important;
       }
     }
   }
@@ -121,8 +144,10 @@ mat-expansion-panel {
     width: 100%;
     overflow: hidden;
   }
+
   min-height: .01%;
   overflow-x: auto;
+
   table > th, td, .mat-header-cell {
     white-space: nowrap;
     padding: 0 5px !important;
@@ -188,16 +213,17 @@ table.loading::after {
   border-style: none;
   margin-left: auto !important;
 }
+
 .spacer {
   flex-grow: 1;
 }
 
-mat-dialog-content{
+mat-dialog-content {
   max-height: 90vh !important;
 }
 
 @media screen and (min-width: @screen-md-min) {
-  mat-dialog-content{
+  mat-dialog-content {
     max-height: 70vh !important;
   }
 }

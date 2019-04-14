@@ -30,17 +30,20 @@ class OrderController extends Controller
         $filter = request('filter', []);
         $interval = $this->parseInterval($filter['interval'] ?? []);
         return OrderResource::collection(
-            Order::notFinalized($interval[0], $interval[1])
+            Order::orders($interval, $filter['updated_at'] ?? null)
         );
     }
 
+    /**
+     * @return \Closure
+     */
     protected function mapItemFn()
     {
-        return function($item){
+        return function ($item) {
             return array_merge($item, [
                 'discount' => $item['discount'] ?? 0
             ]);
-        };;
+        };
     }
 
     /**
@@ -59,7 +62,7 @@ class OrderController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \Bufallus\Models\Order $order
+     * @param \Bufallus\Models\Order $order
      * @return OrderResource|Order
      */
     public function show(Order $order)
@@ -71,20 +74,22 @@ class OrderController extends Controller
      * Update the specified resource in storage.
      *
      * @param CreateOrUpdateOrderRequest $request
-     * @param  \Bufallus\Models\Order $order
+     * @param \Bufallus\Models\Order $order
      * @return \Illuminate\Http\Response|OrderResource|Order
      */
     public function update(CreateOrUpdateOrderRequest $request, Order $order)
     {
         $data = $request->except('items');
         $isDone = $request->get('is_done', false);
+        $items = collect($request->get('items', []));
         if ($isDone) {
             $data['finalized_at'] = Carbon::now();
         } else {
             $data['finalized_at'] = null;
         }
-        $order->update(array_except($data, ['is_done']));
-        collect($request->get('items'))->map($this->mapItemFn())->each(function($item) use($isDone, $order) {
+        tap($order)->touch()->update(array_except($data, ['is_done']));
+        $order->items()->whereNotIn('id', $items->pluck('id')->filter()->all())->delete();
+        $items->map($this->mapItemFn())->each(function ($item) use ($isDone, $order) {
             if (!empty($item['is_done']) && $item['is_done'] || $isDone) {
                 $item['finalized_at'] = Carbon::now();
             } else {
@@ -100,7 +105,7 @@ class OrderController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \Bufallus\Models\Order $order
+     * @param \Bufallus\Models\Order $order
      * @return array
      * @throws \Exception
      */

@@ -15,21 +15,27 @@ class Order extends AbstractModel
 
     protected $dates = [
         'finalized_at',
-        'created_at'
+        'created_at',
+        'updated_at'
     ];
 
     /**
-     * @param null $from
-     * @param null $to
+     * @param array $interval
+     * @param null $lastUpdated
      * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Query\Builder[]|\Illuminate\Support\Collection
      */
-    public static function notFinalized($from = null, $to = null)
+    public static function orders(array $interval = [], $lastUpdated = null)
     {
-        $interval = [$from ?? Carbon::now()->startOfDay(), $to ?? Carbon::now()->endOfDay()];
-        return static::query()->whereNull('finalized_at')
-            ->orWhereBetween('created_at', $interval)
-            ->orderBy('created_at', 'asc')
-            ->get();
+        $interval = $interval ?? [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()];
+        $q = static::query()
+            ->whereBetween('created_at', $interval)
+            ->orderBy('created_at', 'asc');
+
+        if (!empty($lastUpdated)) {
+            $q->where('updated_at', '>=', Carbon::parse($lastUpdated)->setTimezone(config('app.timezone')));
+        }
+
+        return $q->get();
     }
 
     public function items()

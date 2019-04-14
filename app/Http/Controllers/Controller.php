@@ -30,8 +30,8 @@ class Controller extends BaseController
     public function parseInterval($interval)
     {
         $timezone = config('app.timezone');
-        $from = !empty($interval) && !empty($interval[0]) ? Carbon::parse($interval[0])->setTimezone($timezone)->startOfDay()->setTimezone('UTC') : null;
-        $to = !empty($interval) && !empty($interval[1]) ? Carbon::parse($interval[1])->setTimezone($timezone)->endOfDay()->setTimezone('UTC') : null;
+        $from = !empty($interval) && !empty($interval[0]) ? Carbon::parse($interval[0])->setTimezone($timezone)->startOfDay() : null;
+        $to = !empty($interval) && !empty($interval[1]) ? Carbon::parse($interval[1])->setTimezone($timezone)->endOfDay() : null;
         return [$from, $to];
     }
 }

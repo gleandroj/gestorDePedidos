@@ -5,6 +5,7 @@
             <ng-template matStepLabel>Selecione o item</ng-template>
             <mat-form-field>
                 <mat-select formControlName="item_id" required placeholder="Selecione o item"
+                    disableOptionCentering
                     (selectionChange)="stepper.next()">
                     <mat-option>
                         <ngx-mat-select-search (input)="filter($event)" [noEntriesFoundLabel]="'Nenhum item disponível'"

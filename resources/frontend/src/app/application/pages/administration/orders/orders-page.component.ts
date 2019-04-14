@@ -1,14 +1,19 @@
-import { Component, OnDestroy } from '@angular/core';
-import { MatDialog } from '@angular/material';
-import { OrderEntity } from '../../../../core/entities/order-entity';
-import { OrderService } from '../../../../core/services/order.service';
-import { switchMap, take, takeUntil, map } from 'rxjs/operators';
-import { ConfirmDialogComponent, OrderFormDialogComponent, OrderItemFormDialogComponent, CloseOrderFormDialogComponent } from '../../../dialogs';
-import { ItemService } from '../../../../core/services';
-import { ItemEntity } from '../../../../core/entities/item-entity';
-import { EMPTY, Subject, interval } from 'rxjs';
-import { OrderItemEntity } from '../../../../core/entities/order-item-entity';
-import { ToastService } from '../../../../support/services';
+import {Component, OnDestroy} from '@angular/core';
+import {MatDialog} from '@angular/material';
+import {OrderEntity} from '../../../../core/entities/order-entity';
+import {OrderService} from '../../../../core/services/order.service';
+import {switchMap, take, takeUntil, map, tap} from 'rxjs/operators';
+import {
+    ConfirmDialogComponent,
+    OrderFormDialogComponent,
+    OrderItemFormDialogComponent,
+    CloseOrderFormDialogComponent
+} from '../../../dialogs';
+import {ItemService} from '../../../../core/services';
+import {ItemEntity} from '../../../../core/entities/item-entity';
+import {EMPTY, Subject, interval} from 'rxjs';
+import {OrderItemEntity} from '../../../../core/entities/order-item-entity';
+import {ToastService} from '../../../../support/services';
 
 @Component({
     selector: 'app-orders-page',
@@ -25,6 +30,7 @@ export class OrdersPageComponent implements OnDestroy {
     public showFinalized: boolean;
     public showItemsFinalized: { [key: number]: boolean } = {};
     private destroyed$ = new Subject();
+    public lastUpdatedAt = null;
     public filter = {
         interval: [new Date(), new Date()]
     };
@@ -54,20 +60,22 @@ export class OrdersPageComponent implements OnDestroy {
     }
 
     refresh() {
-        this.orderService.all(this.filter)
-            .pipe(
-                take(1)
-            )
-            .subscribe(orders => {
-                orders.forEach(order => {
-                    const local = this.orders.find(o => o.id === order.id);
-                    if (local) {
-                        Object.assign(local, order);
-                    } else {
-                        this.orders.push(order);
-                    }
-                });
+        this.orderService.all({
+            ...this.filter,
+            updated_at: this.lastUpdatedAt
+        }).pipe(
+            tap(() => this.lastUpdatedAt = new Date()),
+            take(1)
+        ).subscribe(orders => {
+            orders.forEach(order => {
+                const local = this.orders.find(o => o.id === order.id);
+                if (local) {
+                    Object.assign(local, order);
+                } else {
+                    this.orders.push(order);
+                }
             });
+        });
     }
 
     menuById(id: number) {
@@ -99,15 +107,15 @@ export class OrdersPageComponent implements OnDestroy {
                 Object.assign(item, updated);
                 this.orderService.save(order).subscribe();
             } else if (updated && !updated.id) {
-                order.items = [updated].concat(order.items);
+                order.items.push(updated);
                 this.orderService.save(order).subscribe();
             }
         });
     }
 
     removeItem(item: OrderItemEntity, order: OrderEntity) {
-        console.log('remote item');
-        console.log(item);
+        order.items = order.items.filter(i => i.id !== item.id);
+        this.orderService.save(order).subscribe();
     }
 
     edit(order?: OrderEntity | any, title?: string) {
@@ -173,7 +181,7 @@ export class OrdersPageComponent implements OnDestroy {
                         order: order,
                         items: this.menus
                     },
-                    panelClass: 'dialog-fullscreen'
+                    panelClass: ['dialog-receipt', 'no-border-radius']
                 }
             ).afterClosed().subscribe((finalized: OrderEntity) => {
                 if (finalized) {

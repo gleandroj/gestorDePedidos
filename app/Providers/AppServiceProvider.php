@@ -14,6 +14,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        date_default_timezone_set(config('app.timezone'));
         Carbon::serializeUsing(function (Carbon $carbon) {
             return $carbon->toIso8601String();
         });
