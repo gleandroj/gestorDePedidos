@@ -77,10 +77,13 @@ class DashboardController extends Controller
             ->withTrashed()
             ->get();
 
-        $type = $report->count() > 3 ? null : 'column';
+        $type = $report->count() > 3 ? 'line' : 'column';
         $dayFormat = '%d/%m/%Y';
         $montFormat = '%m/%Y';
         $yearFormat = '%Y';
+        $mapToFloat = function ($data) {
+            return floatval($data);
+        };
         return [
             'top_five' => $topFive->map(function ($itemComputed, $index) {
                 return [
@@ -104,12 +107,12 @@ class DashboardController extends Controller
                     [
                         'name' => 'Pedidos',
                         'type' => $type,
-                        'data' => $report->pluck('orders')
+                        'data' => $report->pluck('orders')->map($mapToFloat)
                     ],
                     [
                         'name' => 'Vendas',
                         'type' => $type,
-                        'data' => $report->pluck('balance'),
+                        'data' => $report->pluck('balance')->map($mapToFloat),
                         'tooltip' => [
                             'valueDecimals' => 2,
                             'valueSuffix' => ' R$'
@@ -118,7 +121,7 @@ class DashboardController extends Controller
                     [
                         'name' => 'Custo',
                         'type' => $type,
-                        'data' => $report->pluck('cost'),
+                        'data' => $report->pluck('cost')->map($mapToFloat),
                         'tooltip' => [
                             'valueDecimals' => 2,
                             'valueSuffix' => ' R$'
@@ -127,7 +130,7 @@ class DashboardController extends Controller
                     [
                         'name' => 'Descontos',
                         'type' => $type,
-                        'data' => $report->pluck('discount'),
+                        'data' => $report->pluck('discount')->map($mapToFloat),
                         'tooltip' => [
                             'valueDecimals' => 2,
                             'valueSuffix' => ' R$'
@@ -136,7 +139,7 @@ class DashboardController extends Controller
                     [
                         'name' => 'Cancelados',
                         'type' => $type,
-                        'data' => $report->pluck('cancelled')
+                        'data' => $report->pluck('cancelled')->map($mapToFloat)
                     ]
                 ]
             ]
