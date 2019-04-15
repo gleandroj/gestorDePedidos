@@ -63,7 +63,6 @@ class DashboardController extends Controller
             ->groupBy([
                 DB::raw('1')
             ])
-            ->take(5)
             ->withTrashed()
             ->get();
 
