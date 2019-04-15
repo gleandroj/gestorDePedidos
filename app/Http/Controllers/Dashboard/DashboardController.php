@@ -133,13 +133,8 @@ class DashboardController extends Controller
     public function top()
     {
         $filter = request('filter', []);
-        $interval = $this->parseInterval(array_get($filter, 'interval', []));
-        $interval[0] = $interval[0] ?? Carbon::now()->startOfDay();
-        $interval[1] = $interval[1] ?? Carbon::now()->endOfDay();
-
         return TopItemResource::collection(OrderItem::query()
             ->with('item')
-            ->whereBetween('created_at', $interval)
             ->selectRaw(join(',', [
                 'item_id',
                 'count(item_id) as count'
