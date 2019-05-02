@@ -4,7 +4,7 @@
     </button>
 </div>
 <mat-menu #appMenu="matMenu">
-    <button mat-menu-item (click)="showFinalized = !showFinalized">
+    <button mat-menu-item (click)="toggleFinalized()">
         <mat-checkbox [(ngModel)]="showFinalized"></mat-checkbox>
         Mostrar finalizados
     </button>

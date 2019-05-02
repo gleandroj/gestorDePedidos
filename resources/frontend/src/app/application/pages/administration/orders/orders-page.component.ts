@@ -27,7 +27,7 @@ export class OrdersPageComponent implements OnDestroy {
     public orders: OrderEntity[] = [];
     public menus: ItemEntity[] = [];
     public loading = false;
-    public showFinalized: boolean;
+    public showFinalized = false;
     public showItemsFinalized: { [key: number]: boolean } = {};
     private destroyed$ = new Subject();
     public lastUpdatedAt = null;
@@ -59,11 +59,22 @@ export class OrdersPageComponent implements OnDestroy {
         this.refresh();
     }
 
+    toggleFinalized(){
+        this.showFinalized = !this.showFinalized;
+        this.refresh();
+    }
+
     refresh() {
-        this.orderService.all({
+        const filter = {
             ...this.filter,
-            updated_at: this.lastUpdatedAt
-        }).pipe(
+            updated_at: null
+        };
+
+        if(!this.showFinalized){
+            filter.updated_at = this.lastUpdatedAt;
+        }
+
+        this.orderService.all().pipe(
             tap(() => this.lastUpdatedAt = new Date()),
             take(1)
         ).subscribe(orders => {
