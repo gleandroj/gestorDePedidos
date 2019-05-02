@@ -67,14 +67,11 @@ export class OrdersPageComponent implements OnDestroy {
     refresh() {
         const filter = {
             ...this.filter,
-            updated_at: null
+            updated_at: this.lastUpdatedAt,
+            show_finalized: this.showFinalized
         };
 
-        if(!this.showFinalized){
-            filter.updated_at = this.lastUpdatedAt;
-        }
-
-        this.orderService.all().pipe(
+        this.orderService.all(filter).pipe(
             tap(() => this.lastUpdatedAt = new Date()),
             take(1)
         ).subscribe(orders => {

@@ -30,7 +30,7 @@ class OrderController extends Controller
         $filter = request('filter', []);
         $interval = $this->parseInterval($filter['interval'] ?? []);
         return OrderResource::collection(
-            Order::orders($interval, $filter['updated_at'] ?? null)
+            Order::orders($interval, $filter['updated_at'] ?? null, $filter['show_finalized'] ?? false)
         );
     }
 

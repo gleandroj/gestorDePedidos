@@ -24,14 +24,14 @@ class Order extends AbstractModel
      * @param null $lastUpdated
      * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Query\Builder[]|\Illuminate\Support\Collection
      */
-    public static function orders(array $interval = [], $lastUpdated = null)
+    public static function orders(array $interval = [], $lastUpdated = null, $showFinalized = false)
     {
         $interval = $interval ?? [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()];
         $q = static::query()
             ->whereBetween('created_at', $interval)
             ->orderBy('created_at', 'asc');
 
-        if (!empty($lastUpdated)) {
+        if (!empty($lastUpdated) && !$showFinalized) {
             $q->where('updated_at', '>=', Carbon::parse($lastUpdated)->setTimezone(config('app.timezone')));
         }
 
