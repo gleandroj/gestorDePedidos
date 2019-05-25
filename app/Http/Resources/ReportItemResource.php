@@ -11,18 +11,20 @@ namespace Bufallus\Http\Resources;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * Class TopItemResource
+ * Class ReportItemResource
  * @package Bufallus\Http\Resources
  */
-class TopItemResource extends JsonResource
+class ReportItemResource extends JsonResource
 {
     public function toArray($request)
     {
         return [
-            "rank_id" => $this->rank_id,
             "item_id" => $this->item_id,
-            "count" => $this->count,
-            "item" => $this->item->description
+            "description" => $this->description,
+            "quantity" => floatval($this->quantity),
+            "price" => floatval($this->price),
+            "cost" => floatval($this->cost),
+            "discount" => floatval($this->discount)
         ];
     }
 }

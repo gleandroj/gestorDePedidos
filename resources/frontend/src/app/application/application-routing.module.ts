@@ -7,7 +7,7 @@ import {
     UsersPageComponent,
     ForgetPasswordPageComponent,
     ResetPasswordPageComponent,
-    ItemsPageComponent, OrdersPageComponent, DashboardPageComponent,
+    ItemsPageComponent, OrdersPageComponent, DashboardPageComponent, ReportItemsPageComponent,
 } from './pages';
 import {AuthGuard} from '../core/guards/auth-guard';
 
@@ -90,6 +90,21 @@ const routes: Routes = [
                                 'administrator'
                             ],
                             breadcrumb: 'Gerenciar Pedidos'
+                        }
+                    }
+                ]
+            },
+            {
+                path: 'relatorios',
+                children: [
+                    {
+                        path: 'cardapio',
+                        component: ReportItemsPageComponent,
+                        data: {
+                            authorization: [
+                                'administrator'
+                            ],
+                            breadcrumb: 'Relatório de Itens'
                         }
                     }
                 ]

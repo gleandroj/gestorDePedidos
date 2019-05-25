@@ -1,0 +1,48 @@
+:host {
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+
+  /deep/ .mat-row {
+    height: 45px;
+  }
+
+  .absolute-center {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+  }
+}
+
+.indicator-card {
+  padding: 25px 30px;
+  min-width: 230px;
+}
+
+.mat-more-fab-buttom {
+  position: fixed;
+  z-index: 100;
+  right: 1%;
+  top: 10px;
+}
+
+.img-responsive {
+  width: auto;
+  height: 300px;
+}
+
+/deep/ .filter-form-field {
+  height: auto;
+
+  &:hover {
+    background: white !important;
+  }
+
+  .mat-form-field-wrapper {
+    padding-bottom: 0 !important;
+  }
+}
+
+/deep/ .mat-expansion-panel-body {
+  padding: 0 10px 16px !important;
+}

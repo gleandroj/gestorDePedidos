@@ -44,3 +44,5 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('dashboard/data', 'Dashboard\DashboardController@data');
 
 });
+
+Route::post('report/items', 'Report\ReportController@paginate');

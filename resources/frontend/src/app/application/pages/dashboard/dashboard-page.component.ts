@@ -41,7 +41,6 @@ export class DashboardPageComponent extends AbstractTableComponent<any> implemen
         this.refresh();
     }
 
-
     public paginate(page?, perPage?, sortable?, filter?) {
         return this.dashboardService.paginate(
             page,

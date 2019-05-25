@@ -20,7 +20,8 @@ const PagesComponents = [
     Pages.ErrorPageComponent,
     Pages.UsersPageComponent,
     Pages.OrdersPageComponent,
-    Pages.DashboardPageComponent
+    Pages.DashboardPageComponent,
+    Pages.ReportItemsPageComponent
 ];
 
 const DialogComponents = [

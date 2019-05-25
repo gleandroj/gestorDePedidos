@@ -8,3 +8,4 @@ export * from './administration/users/users-page.component';
 export * from './administration/items/items-page.component';
 export * from './administration/orders/orders-page.component';
 export * from './dashboard/dashboard-page.component';
+export * from './report/report-items-page.component';

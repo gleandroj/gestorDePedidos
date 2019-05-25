@@ -132,17 +132,18 @@ class DashboardController extends Controller
      */
     public function top()
     {
-        $filter = request('filter', []);
+        //$filter = request('filter', []);
         return TopItemResource::collection(OrderItem::query()
             ->with('item')
             ->selectRaw(join(',', [
+                'ROW_NUMBER() OVER (ORDER BY sum(quantity) DESC) AS rank_id',
                 'item_id',
-                'count(item_id) as count'
+                'sum(quantity) as count'
             ]))
             ->groupBy([
                 'item_id'
             ])
-            ->orderByRaw('2 desc')
+            ->orderByRaw('1 ASC')
             ->paginate(5));
     }
 }
