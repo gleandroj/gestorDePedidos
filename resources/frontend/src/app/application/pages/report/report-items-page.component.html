@@ -42,7 +42,7 @@
             </ng-container>
             <ng-container matColumnDef="quantity">
                 <th mat-header-cell mat-sort-header="quantity" *matHeaderCellDef> Quantidade</th>
-                <td mat-cell *matCellDef="let element"> {{element.quantity | number:'1.2-2'}}R$</td>
+                <td mat-cell *matCellDef="let element"> {{element.quantity | number}}</td>
             </ng-container>
             <ng-container matColumnDef="price">
                 <th mat-header-cell mat-sort-header="price" *matHeaderCellDef> Preço</th>
