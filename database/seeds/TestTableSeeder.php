@@ -13,7 +13,7 @@ class TestTableSeeder extends Seeder
      */
     public function run()
     {
-        factory(Order::class, 100)->create()->each(function (Order $order) {
+        factory(Order::class, 2)->create()->each(function (Order $order) {
             factory(OrderItem::class, rand(1, 10))->create([
                 'order_id' => $order->getKey()
             ]);

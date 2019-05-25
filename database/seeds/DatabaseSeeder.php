@@ -29,5 +29,7 @@ class DatabaseSeeder extends Seeder
     }
 
     private function testSeed()
-    {}
+    {
+        $this->call(TestTableSeeder::class);
+    }
 }
