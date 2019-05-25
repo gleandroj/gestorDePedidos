@@ -29,7 +29,7 @@ export const menus = [
     {
         title: 'Relatório',
         action: '/bufallus/relatorios/cardapio',
-        icon: 'report',
+        icon: 'view_list',
         isLink: true,
         authorization: [
             'administrator'

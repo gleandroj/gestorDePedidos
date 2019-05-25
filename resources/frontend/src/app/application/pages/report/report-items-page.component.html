@@ -4,8 +4,8 @@
 <!--    </button>-->
 <!--</div>-->
 <mat-card>
-    <div style="display: flex; flex-direction: row;">
-        <mat-form-field appearance="outline">
+    <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
+        <mat-form-field appearance="outline" fxFlex.lt-sm="100">
             <mat-label>Pesquisar</mat-label>
             <input #input (input)="searchSubject.next(input.value)" matInput type="text" placeholder="Digite aqui...">
             <mat-icon matPrefix>search</mat-icon>
@@ -15,7 +15,7 @@
             </mat-icon>
         </mat-form-field>
         <span style="display: flex; flex-grow: 1;"></span>
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline" fxFlex.lt-sm="100">
             <mat-label>Dt. Início</mat-label>
             <input matInput [(ngModel)]="filter.interval[0]" (focus)="picker.open()" [matDatepicker]="picker"
                    (ngModelChange)="refresh()"
@@ -23,7 +23,7 @@
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline" fxFlex.lt-sm="100">
             <mat-label>Dt. Fim</mat-label>
             <input [(ngModel)]="filter.interval[1]" (ngModelChange)="refresh()"
                    (focus)="picker2.open()" matInput [matDatepicker]="picker2"
