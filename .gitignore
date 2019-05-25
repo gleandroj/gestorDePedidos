@@ -13,6 +13,8 @@
 # Env
 .env
 
+client-secret.json
+
 # IDEs and editors
 /.idea
 .project
