@@ -1,7 +1,9 @@
 <h2 mat-dialog-title class="text-center" style="margin: 0 0 20px -10px">Mesa {{ order.table }}</h2>
 <mat-dialog-content class="mat-typography order-form">
     <mat-card-content fxLayout="column">
-        <h3 class="mat-subheading-1" style="margin: 0 0 0 -10px"><strong>Itens</strong></h3>
+        <h3 class="mat-subheading-1" style="margin: 0 0 0 -10px">
+            <strong>Itens</strong>
+        </h3>
         <div class="text-center" *ngIf="items.length === 0">
             <h4 class="text-center">Nenhum item no pedido</h4>
         </div>

@@ -10,6 +10,7 @@
         "ext-imagick": "*",
         "ext-json": "*",
         "defuse/php-encryption": "^2.2",
+        "doctrine/dbal": "^2.9",
         "eristemena/dialogflow-fulfillment-webhook-php": "^1.2",
         "fideloper/proxy": "^4.0",
         "google/cloud-dialogflow": "^0.8.3",

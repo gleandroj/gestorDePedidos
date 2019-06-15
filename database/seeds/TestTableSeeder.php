@@ -13,10 +13,16 @@ class TestTableSeeder extends Seeder
      */
     public function run()
     {
-        factory(Order::class, 2)->create()->each(function (Order $order) {
-            factory(OrderItem::class, rand(1, 10))->create([
-                'order_id' => $order->getKey()
+        for ($i = 0; $i < 10; $i++) {
+            $order = factory(Order::class)->create([
+                'created_at' => \Carbon\Carbon::now()->subDay($i),
+                'updated_at' => \Carbon\Carbon::now()->subDay($i)
             ]);
-        });
+            factory(OrderItem::class, rand(1, 2))->create([
+                'order_id' => $order->getKey(),
+                'created_at' => \Carbon\Carbon::now()->subDay($i),
+                'updated_at' => \Carbon\Carbon::now()->subDay($i)
+            ]);
+        }
     }
 }

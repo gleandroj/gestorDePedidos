@@ -29,6 +29,7 @@ Route::group(['prefix' => '/auth'], function () {
 /**
  * Auth API
  */
+Route::post('report/items', 'Report\ReportController@paginate');
 Route::middleware(['auth:api'])->group(function () {
     Route::pattern('user', '[0-9]+');
     Route::apiResource('users', 'User\UserController', ['except' => ['destroy']]);
@@ -40,9 +41,14 @@ Route::middleware(['auth:api'])->group(function () {
     Route::pattern('order', '[0-9]+');
     Route::apiResource('orders', 'Order\OrderController');
 
+    Route::pattern('order_item', '[0-9]+');
+    Route::apiResource('orders/{order}/order_items', 'Order\OrderItemController', [
+        'only' => ['store', 'update', 'destroy']
+    ]);
+
     Route::get('dashboard', 'Dashboard\DashboardController@top');
     Route::post('dashboard/data', 'Dashboard\DashboardController@data');
 
 });
 
-Route::post('report/items', 'Report\ReportController@paginate');
+//Route::post('test', 'Dialogflow\ChatbotController@test');

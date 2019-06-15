@@ -4,7 +4,6 @@ namespace Bufallus\Models;
 
 class OrderItem extends AbstractModel
 {
-
     protected $fillable = [
         'observation',
         'quantity',

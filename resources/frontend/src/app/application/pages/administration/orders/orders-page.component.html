@@ -11,7 +11,7 @@
     <div mat-menu-item disableRipple (click)="$event.stopPropagation()" class="filter-form-field">
         <mat-form-field appearance="outline">
             <input matInput [(ngModel)]="filter.interval[0]" (focus)="picker.open()" [matDatepicker]="picker"
-                (ngModelChange)="refresh()" placeholder="Dt. início">
+                   (ngModelChange)="refresh()" placeholder="Dt. início">
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
@@ -19,7 +19,7 @@
     <div mat-menu-item disableRipple (click)="$event.stopPropagation()" class="filter-form-field">
         <mat-form-field appearance="outline">
             <input [(ngModel)]="filter.interval[1]" (ngModelChange)="refresh()" (focus)="picker2.open()" matInput
-                [matDatepicker]="picker2" placeholder="Dt. fim">
+                   [matDatepicker]="picker2" placeholder="Dt. fim">
             <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
             <mat-datepicker #picker2></mat-datepicker>
         </mat-form-field>
@@ -34,9 +34,9 @@
 
 <mat-accordion>
     <mat-expansion-panel hideToggle [expanded]="i === 0 && !order.is_done"
-        *ngFor="let order of filteredOrders; let i = index;">
+                         *ngFor="let order of filteredOrders; let i = index;">
         <mat-expansion-panel-header [ngClass]="{'is-done': order.is_done}"
-            style="padding: 0 10px; align-items: center;">
+                                    style="padding: 0 10px; align-items: center;">
             <mat-panel-title style="align-items: center;">
                 <mat-icon class="push-10-r">restaurant</mat-icon>
                 <span class="mat-subheader">Mesa {{ order.table }}</span>
@@ -64,39 +64,43 @@
         </mat-expansion-panel-header>
         <mat-action-list class="order-items">
             <div mat-subheader class="mat-subheader"
-                style="width: 100%; display: flex; flex-direction: row; align-content: center;">
+                 style="width: 100%; display: flex; flex-direction: row; align-content: center;">
                 <span style="margin-right: 10px !important;">Itens</span>
                 <mat-checkbox [(ngModel)]="showItemsFinalized[i]">Concluídos?</mat-checkbox>
             </div>
 
-            <mat-list-item class="order-item mat-typography" disableRipple
-                *ngFor="let item of orderItems(order.items, showItemsFinalized[i])"
-                [ngClass]="{'is-done': item.is_done}">
-                <span mat-list-icon class="push-5-r" style=" font-size: 21px;"> {{ item.quantity }}x </span>
-                <div class="mat-list-text" style="padding-left: 5px !important;">
-                    <h4>{{ menuById(item.item_id)?.description }}</h4>
-                    <p> Obs: {{item.observation}} </p>
-                </div>
-                <span class="push-10-r mat-list-icon" style="width: auto; white-space: nowrap; font-size: 21px;">
+            <div class="order-item mat-typography" *ngFor="let item of orderItems(order.items, showItemsFinalized[i])">
+                <mat-list-item disableRipple
+                               [ngClass]="{'is-done': item.is_done}">
+
+                    <span mat-list-icon class="push-5-r" style="width: auto; font-size: 21px;"> {{ item.quantity }}
+                        x </span>
+                    <h4 mat-line>{{ menuById(item.item_id)?.description }}</h4>
+                    <p mat-line> Obs: {{item.observation}} </p>
+
+                    <span class="push-10-r mat-list-icon" style="width: auto; white-space: nowrap; font-size: 21px;">
                     {{ (item.price || 0) - (item.discount || 0) | number: '1.2-2' }} R$
                 </span>
-                <span style="display: flex; flex: 1;"></span>
-                <button style="margin: 0 -20px;" mat-icon-button [matMenuTriggerFor]="menu"
-                    (click)="$event.stopPropagation()">
-                    <mat-icon>more_vert</mat-icon>
-                </button>
-                <mat-menu #menu="matMenu">
-                    <button mat-menu-item (click)="markItemAsDone(order, item)">
-                        {{ !item.is_done ? 'Marcar' : 'Desmarcar' }} como feito
+
+                    <span style="display: flex; flex: 1;"></span>
+                    <button style="margin: 0 -20px;" mat-icon-button [matMenuTriggerFor]="menu"
+                            (click)="$event.stopPropagation()">
+                        <mat-icon>more_vert</mat-icon>
                     </button>
-                    <button mat-menu-item (click)="editItem(item, order, 'Editar Item')">
-                        Editar Item
-                    </button>
-                    <button mat-menu-item (click)="removeItem(item, order)">
-                        Remover Item
-                    </button>
-                </mat-menu>
-            </mat-list-item>
+                    <mat-menu #menu="matMenu">
+                        <button mat-menu-item (click)="markItemAsDone(order, item)">
+                            {{ !item.is_done ? 'Marcar' : 'Desmarcar' }} como feito
+                        </button>
+                        <button mat-menu-item (click)="editItem(item, order, 'Editar Item')">
+                            Editar Item
+                        </button>
+                        <button mat-menu-item (click)="removeItem(item, order)">
+                            Remover Item
+                        </button>
+                    </mat-menu>
+                </mat-list-item>
+                <br/>
+            </div>
 
             <ng-container *ngIf="orderItems(order.items, showItemsFinalized[i])?.length === 0">
                 <div class="text-center" style="margin-top: 10px; margin-bottom: 10px;">
@@ -111,7 +115,7 @@
         <mat-action-row style="padding: 8px 8px 16px 16px">
             <b>Hora: </b> {{ order.created_at | date:'HH:mm:ss' }}
             <span style="flex: 1;"></span>
-            <b>Total: </b> {{ order.total_price | number: '1.2-2' }}R$
+            <b>Total: </b> {{ totalComputedPrice(order) | number: '1.2-2' }}R$
         </mat-action-row>
     </mat-expansion-panel>
 </mat-accordion>

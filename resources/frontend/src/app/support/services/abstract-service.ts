@@ -55,7 +55,8 @@ export abstract class AbstractService<T> {
     }
 
     public delete(id): Observable<T> {
-        return this.http.delete<any>(`${this.baseURL}/${this.resourceURL}/${id}`)
+        const _id = ('id' in id ? id.id : id);
+        return this.http.delete<any>(`${this.baseURL}/${this.resourceURL}/${_id}`)
             .pipe(map((resp: any) => resp));
     }
 

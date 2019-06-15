@@ -32,7 +32,7 @@
         <mat-action-list style="margin: 0 -10px 0 -20px;">
             <mat-list-item class="order-item mat-typography" *ngFor="let control of items.controls; let i = index;"
                 (click)="editItem(control)">
-                <span mat-list-icon class="push-5-r"> {{ control.value.quantity }}x </span>
+                <span mat-list-icon class="push-5-r" style="width: auto; font-size: 21px;"> {{ control.value.quantity }}x </span>
                 <h4 mat-line>{{ getItemById(control.value.item_id)?.description }}</h4>
                 <p mat-line> Obs: {{ control.value.observation }} </p>
                 <span class="push-10-r mat-list-icon" style="width: auto; white-space: nowrap;">

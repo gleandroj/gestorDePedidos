@@ -17,13 +17,13 @@ class OrderItemResource extends JsonResource
         return [
             "id" => $this->id,
             "item_id" => $this->item_id,
-            "quantity" => $this->quantity,
+            "quantity" => floatval($this->quantity),
             "created_at" => $this->created_at,
             "finalized_at" => $this->finalized_at,
             "is_done" => !!$this->finalized_at,
-            "price" => $this->price,
-            "cost" => $this->cost,
-            "discount" => $this->discount,
+            "price" => floatval($this->price),
+            "cost" => floatval($this->cost),
+            "discount" => floatval($this->discount),
             "observation" => $this->observation
         ];
     }

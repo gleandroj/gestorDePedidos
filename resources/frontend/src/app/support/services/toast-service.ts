@@ -7,7 +7,7 @@ export class ToastService {
     public readonly config: MatSnackBarConfig = {
         duration: 3000,
         horizontalPosition: 'end',
-        verticalPosition: 'top'
+        verticalPosition: 'bottom'
     };
 
     constructor(private matSnackBar: MatSnackBar) {

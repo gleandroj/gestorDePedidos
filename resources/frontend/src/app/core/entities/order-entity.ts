@@ -6,5 +6,4 @@ export interface OrderEntity extends BaseEntity {
     items: OrderItemEntity[];
     is_done: boolean;
     finalized_at: string;
-    total_price?: number;
 }

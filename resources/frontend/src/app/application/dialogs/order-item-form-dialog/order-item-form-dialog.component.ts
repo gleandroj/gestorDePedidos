@@ -1,13 +1,13 @@
-import { ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ToastService } from '../../../support/services';
-import { OrderService } from '../../../core/services/order.service';
-import { ItemEntity } from '../../../core/entities/item-entity';
-import { ItemService } from '../../../core/services';
-import { Subject } from 'rxjs';
-import { takeUntil, distinctUntilChanged } from 'rxjs/operators';
-import { OrderItemEntity } from '../../../core/entities/order-item-entity';
+import {ChangeDetectorRef, Component, Inject, OnDestroy, OnInit} from '@angular/core';
+import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {ToastService} from '../../../support/services';
+import {OrderService} from '../../../core/services/order.service';
+import {ItemEntity} from '../../../core/entities/item-entity';
+import {ItemService} from '../../../core/services';
+import {Subject} from 'rxjs';
+import {takeUntil, distinctUntilChanged} from 'rxjs/operators';
+import {OrderItemEntity} from '../../../core/entities/order-item-entity';
 
 interface DialogOptions {
     title?: string;
@@ -53,16 +53,10 @@ export class OrderItemFormDialogComponent implements OnDestroy {
             item_id: [this.item.item_id || null, Validators.required],
             observation: this.item.observation || null
         });
-        this.form.valueChanges
-            .pipe(
-                takeUntil(this.$destroyed),
-                distinctUntilChanged()
-            )
-            .subscribe((value) => this.computePrice(value));
-    }
-
-    log(event) {
-        console.log(event);
+        this.form.valueChanges.pipe(
+            takeUntil(this.$destroyed),
+            distinctUntilChanged()
+        ).subscribe((value) => this.computePrice(value));
     }
 
     getItemById(id) {
@@ -88,12 +82,12 @@ export class OrderItemFormDialogComponent implements OnDestroy {
                 price: computedPrice,
                 cost: value.quantity * itemValue.cost,
                 discount: value.discount > computedPrice ? itemValue.price : value.discount,
-            }, { onlySelf: false, emitEvent: false });
+            }, {onlySelf: false, emitEvent: false});
         } else {
             this.form.patchValue({
                 price: 0,
                 cost: 0,
-            }, { onlySelf: false, emitEvent: false });
+            }, {onlySelf: false, emitEvent: false});
         }
     }
 

@@ -14,6 +14,7 @@ import {ItemEntity} from '../../../../core/entities/item-entity';
 import {EMPTY, Subject, interval} from 'rxjs';
 import {OrderItemEntity} from '../../../../core/entities/order-item-entity';
 import {ToastService} from '../../../../support/services';
+import {OrderItemService} from '../../../../core/services/order-item.service';
 
 @Component({
     selector: 'app-orders-page',
@@ -42,6 +43,7 @@ export class OrdersPageComponent implements OnDestroy {
 
     public constructor(
         private orderService: OrderService,
+        private orderItemService: OrderItemService,
         private itemService: ItemService,
         private toastr: ToastService,
         private dialogService: MatDialog
@@ -59,7 +61,14 @@ export class OrdersPageComponent implements OnDestroy {
         this.refresh();
     }
 
-    toggleFinalized(){
+    totalComputedPrice(order: OrderEntity) {
+        return order.items.reduce((total, value) => {
+            const currValue = value as OrderItemEntity;
+            return total += ((currValue.price ? currValue.price : 0) - (currValue.discount ? currValue.discount : 0));
+        }, 0);
+    }
+
+    toggleFinalized() {
         this.showFinalized = !this.showFinalized;
         this.refresh();
     }
@@ -96,10 +105,12 @@ export class OrdersPageComponent implements OnDestroy {
 
     markItemAsDone(order: OrderEntity, item: OrderItemEntity) {
         item.is_done = !item.is_done;
-        this.orderService.save(order).subscribe();
+        this.orderItemService.setOrder(order).save(item).subscribe((orderItem) => {
+            Object.assign(item, orderItem);
+        });
     }
 
-    editItem(item: OrderItemEntity, order: OrderEntity, title: string) {
+    editItem(item: OrderItemEntity | any, order: OrderEntity, title: string) {
         this.dialogService.open(
             OrderItemFormDialogComponent,
             {
@@ -111,19 +122,22 @@ export class OrdersPageComponent implements OnDestroy {
                 panelClass: ['dialog-fullscreen', 'no-padding']
             }
         ).afterClosed().subscribe((updated) => {
-            if (updated && updated.id) {
-                Object.assign(item, updated);
-                this.orderService.save(order).subscribe();
-            } else if (updated && !updated.id) {
-                order.items.push(updated);
-                this.orderService.save(order).subscribe();
+            if (updated) {
+                this.orderItemService.setOrder(order).save(updated).subscribe((orderItem) => {
+                    if (item && item.id) {
+                        Object.assign(item, orderItem);
+                    } else {
+                        order.items.push(orderItem);
+                    }
+                });
             }
         });
     }
 
     removeItem(item: OrderItemEntity, order: OrderEntity) {
-        order.items = order.items.filter(i => i.id !== item.id);
-        this.orderService.save(order).subscribe();
+        this.orderItemService.setOrder(order).delete(item).subscribe(() => {
+            order.items = order.items.filter(i => i.id !== item.id);
+        });
     }
 
     edit(order?: OrderEntity | any, title?: string) {
@@ -143,7 +157,6 @@ export class OrdersPageComponent implements OnDestroy {
                     is_done: data.is_done,
                     table: data.table,
                     created_at: data.created_at,
-                    total_price: data.total_price,
                     finalized_at: data.finalized_at,
                     id: data.id
                 });

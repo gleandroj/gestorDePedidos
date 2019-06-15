@@ -1,16 +1,16 @@
-import { ChangeDetectorRef, Component, Inject, OnDestroy } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material';
-import { FormArray, FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
-import { ToastService } from '../../../support/services';
-import { HttpErrorResponse } from '@angular/common/http';
-import { ApiException } from '../../../support/interfaces/api-exception';
-import { OrderEntity } from '../../../core/entities/order-entity';
-import { OrderService } from '../../../core/services/order.service';
-import { ItemEntity } from '../../../core/entities/item-entity';
-import { ItemService } from '../../../core/services';
-import { OrderItemEntity } from '../../../core/entities/order-item-entity';
-import { Subject } from 'rxjs';
-import { OrderItemFormDialogComponent } from '../order-item-form-dialog/order-item-form-dialog.component';
+import {ChangeDetectorRef, Component, Inject, OnDestroy} from '@angular/core';
+import {MatDialogRef, MAT_DIALOG_DATA, MatDialog} from '@angular/material';
+import {FormArray, FormBuilder, FormGroup, Validators, FormControl} from '@angular/forms';
+import {ToastService} from '../../../support/services';
+import {HttpErrorResponse} from '@angular/common/http';
+import {ApiException} from '../../../support/interfaces/api-exception';
+import {OrderEntity} from '../../../core/entities/order-entity';
+import {OrderService} from '../../../core/services/order.service';
+import {ItemEntity} from '../../../core/entities/item-entity';
+import {ItemService} from '../../../core/services';
+import {OrderItemEntity} from '../../../core/entities/order-item-entity';
+import {Subject} from 'rxjs';
+import {OrderItemFormDialogComponent} from '../order-item-form-dialog/order-item-form-dialog.component';
 
 interface DialogOptions {
     title?: string;
@@ -116,16 +116,19 @@ export class OrderFormDialogComponent implements OnDestroy {
                 },
                 panelClass: ['dialog-fullscreen', 'no-padding']
             }
-        ).afterClosed().subscribe((item) => {
-            if (item) {
-                control.setValue(item);
-            }
-        });
+        )
+            .afterClosed()
+            .subscribe((item) => {
+                if (item) {
+                    control.setValue(item);
+                }
+            });
     }
 
     save() {
         this.loading = true;
-        this.orderService.save(this.form.value).subscribe((order) => {
+        this.orderService.save(this.form.value)
+            .subscribe((order) => {
             this.loading = false;
             if (this.form.value.id) {
                 this.toastr.open(

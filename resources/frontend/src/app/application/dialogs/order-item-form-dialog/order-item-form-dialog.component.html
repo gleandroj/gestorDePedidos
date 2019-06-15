@@ -1,4 +1,4 @@
-<mat-vertical-stepper [linear]="!editMode" #stepper
+<mat-vertical-stepper #stepper
     (selectionChange)="$event.selectedIndex === 4 ? saveBtn.focus() : null">
     <mat-step [stepControl]="form">
         <form [formGroup]="form">
@@ -56,18 +56,6 @@
         </form>
     </mat-step>
     <mat-step [stepControl]="form">
-        <form [formGroup]="form">
-            <ng-template matStepLabel>Deseja aplicar algum desconto?</ng-template>
-            <mat-form-field>
-                <input matInput formControlName="discount" type="number" inputmode="numeric">
-            </mat-form-field>
-            <div>
-                <button mat-raised-button color="accent" matStepperNext>
-                    {{ form.get('discount').value != null ? 'Ok' : 'Não' }}</button>
-            </div>
-        </form>
-    </mat-step>
-    <mat-step [stepControl]="form">
         <form [formGroup]="form" style="display: flex;flex-direction: column;margin-left: -20px;margin-right: 10px;">
             <ng-template matStepLabel>Finalizar</ng-template>
             <div style="display: flex; flex-direction: row;">
@@ -87,11 +75,6 @@
                         [value]="(form.get('price')?.value - form.get('discount')?.value) | number: '1.2-2'">
                     <span matSuffix>R$</span>
                 </mat-form-field>
-                <mat-form-field style="width: 30%;">
-                    <input matInput placeholder="Desconto" type="text" [disabled]="true"
-                        [value]="form.get('discount')?.value || 0 | number: '1.2-2'">
-                    <span matSuffix>R$</span>
-                </mat-form-field>
             </div>
 
             <mat-form-field style="width: 100%;" *ngIf="form.get('observation').value">
@@ -105,6 +88,6 @@
 <mat-dialog-actions style="padding: 0 24px;">
     <button mat-button (click)="cancel()">Cancelar</button>
     <span style="flex: 1;"></span>
-    <button #saveBtn mat-button mat-raised-button [disabled]="form.invalid" color="accent" color="accent"
+    <button #saveBtn mat-button mat-raised-button [disabled]="form.invalid" color="accent"
         (click)="save()">Salvar</button>
 </mat-dialog-actions>

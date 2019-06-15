@@ -46,6 +46,18 @@ class OrderController extends Controller
         };
     }
 
+
+    /**
+     * Display the specified resource.
+     *
+     * @param \Bufallus\Models\Order $order
+     * @return OrderResource|Order
+     */
+    public function show(Order $order)
+    {
+        return new OrderResource($order);
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -60,17 +72,6 @@ class OrderController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param \Bufallus\Models\Order $order
-     * @return OrderResource|Order
-     */
-    public function show(Order $order)
-    {
-        return new OrderResource($order);
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param CreateOrUpdateOrderRequest $request
@@ -82,13 +83,17 @@ class OrderController extends Controller
         $data = $request->except('items');
         $isDone = $request->get('is_done', false);
         $items = collect($request->get('items', []));
+
         if ($isDone) {
             $data['finalized_at'] = Carbon::now();
         } else {
             $data['finalized_at'] = null;
         }
+
         tap($order)->touch()->update(array_except($data, ['is_done']));
+
         $order->items()->whereNotIn('id', $items->pluck('id')->filter()->all())->delete();
+
         $items->map($this->mapItemFn())->each(function ($item) use ($isDone, $order) {
             if (!empty($item['is_done']) && $item['is_done'] || $isDone) {
                 $item['finalized_at'] = Carbon::now();
