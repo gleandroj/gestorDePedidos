@@ -44,9 +44,11 @@ export class TableItemsComponent {
     print() {
         this.orderService.print(this.order, this.selected).subscribe(() => {
             this.toastr.open('Impressão finalizada!');
+            this.selected = [];
         }, (response: HttpErrorResponse) => {
             const err = response.error as ApiException<any>;
             this.toastr.open(err.message);
+            this.selected = [];
         });
     }
 
