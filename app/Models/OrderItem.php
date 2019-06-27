@@ -55,4 +55,24 @@ class OrderItem extends AbstractModel
     {
         return $this->hasMany(OrderItem::class, 'parent_id');
     }
+
+    /**
+     * @param array $itemsAllowed
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection
+     */
+    public function childrenToPrint($itemsAllowed = [])
+    {
+        $q = $this->children()
+            ->whereNotNull('parent_id')
+            ->whereNull('finalized_at');
+
+        if (count($itemsAllowed) > 0) {
+            $q = $q->orWhere(function ($q) use ($itemsAllowed) {
+                $q->orWhereIn('id', $itemsAllowed)
+                    ->whereNotNull('parent_id');
+            });
+        }
+
+        return $q->get();
+    }
 }

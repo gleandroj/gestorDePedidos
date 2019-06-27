@@ -68,6 +68,7 @@ export class OrderItemFormDialogComponent implements OnDestroy {
 
         this.form = fb.group({
             id: [this.orderItem.id || null],
+            parent_id: [this.orderItem.parent_id || null],
             quantity: [this.orderItem.quantity || 1, Validators.required],
             price: [this.orderItem.price || 0, Validators.required],
             cost: [this.orderItem.cost || 0, Validators.required],

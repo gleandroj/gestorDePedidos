@@ -2,8 +2,9 @@
 
 namespace Bufallus\Models;
 
+use Bufallus\Support\Exceptions\ApiException;
 use Carbon\Carbon;
-
+use Illuminate\Support\Facades\Log;
 use Mike42\Escpos\CapabilityProfile;
 use Mike42\Escpos\EscposImage;
 use Mike42\Escpos\PrintConnectors\CupsPrintConnector;
@@ -61,61 +62,110 @@ class Order extends AbstractModel
 
     /**
      * @param array $itemsAllowed
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function orderItemsToPrint($itemsAllowed = [])
+    {
+        $q = $this->orderItems()
+            ->whereNull('parent_id')
+            ->whereNull('finalized_at');
+
+        if (count($itemsAllowed) > 0) {
+            $q = $q->orWhere(function ($q) use ($itemsAllowed) {
+                $q->orWhereIn('id', $itemsAllowed)
+                    ->whereNull('parent_id');
+            });
+        }
+
+        return $q->get();
+    }
+
+    /**
+     * @param array $itemsAllowed
      * @throws \Exception
      */
     public function print($itemsAllowed = [])
     {
+
+        //A 32 B 44
         $maxChar = 32;
-        /** @var Carbon $createdAt */
-        $createdAt = $this->created_at;
-        $createdAt = $createdAt->format('d/m/Y H:i:s');
+        $font = Printer::FONT_A;
+        $orderItems = $this->orderItemsToPrint($itemsAllowed);
 
-        $connector = new CupsPrintConnector("printer");
-        $profile = CapabilityProfile::load("default");
-        $printer = new Printer($connector, $profile);
+        if ($orderItems->count() === 0) {
+            throw new ApiException('empty_table', 'Nenhum item selecionado ou cadastrado na mesa.', 400);
+        }
 
-        $tux = EscposImage::load(base_path("resources/frontend/src/assets/img/logo-print.png"), true);
+        try {
+            /** @var Carbon $createdAt */
+            $createdAt = $this->created_at;
+            $createdAt = $createdAt->format('d/m/Y H:i:s');
+            $table = $this->attributes['table'];
 
-        $printer->bitImage($tux);
+            $connector = new CupsPrintConnector("printer");
+            $profile = CapabilityProfile::load("POS-5890");
+            $printer = new Printer($connector, $profile);
 
-        $printer->setJustification(Printer::JUSTIFY_CENTER);
-        $printer->selectPrintMode(Printer::MODE_EMPHASIZED);
-        $printer->text("Mesa: {$this->table}\n");
-        $printer->selectPrintMode();
-        $printer->setJustification(Printer::JUSTIFY_LEFT);
-        $printer->feed();
+            $tux = EscposImage::load(base_path("resources/frontend/src/assets/img/logo-print.png"), true);
+            $printer->bitImage($tux);
 
-        $printOrderItem = function (OrderItem $orderItem, Printer $printer, $subItem = false) use ($maxChar) {
-            $item = $orderItem->item->description;
+            /** Title */
+            $printer->setJustification(Printer::JUSTIFY_CENTER);
+            $printer->selectPrintMode(Printer::MODE_EMPHASIZED);
+            $printer->text("Mesa: {$table}\n");
+            $printer->feed();
 
-            $qty = str_pad($orderItem->quantity . 'x', 3, ' ', STR_PAD_RIGHT);
-            $obs = substr($orderItem->observation, 0, $maxChar);
-            $qty = $subItem ? ' - ' . $qty : $qty;
+            /** Config */
+            $printer->selectPrintMode();
+            $printer->setFont($font);
+            $printer->setJustification(Printer::JUSTIFY_LEFT);
 
-            $printer->setFont(Printer::FONT_A);
-            $printer->text("${qty}  ${item}\n");
+            /** Items */
+            $printOrderItem = function (OrderItem $orderItem, Printer $printer, $subItem = false) use ($maxChar) {
+                $item = $orderItem->item->description;
+                $qtyChar = 3;
+                $priceChar = 5;
 
-            if (!$subItem && !empty($obs)) {
-                $printer->text("Obs: ${obs}\n");
-            }
-        };
+                $qty = str_pad($orderItem->quantity . 'x', $qtyChar, ' ', STR_PAD_RIGHT);
 
-        $this->orderItems()->whereIn('id', $itemsAllowed)->whereNull('parent_id')->get()
-            ->each(function (OrderItem $orderItem) use ($printOrderItem, $printer, $maxChar, $itemsAllowed) {
+                $obs = substr($orderItem->observation, 0, $maxChar);
+
+                $qty = $subItem ? '' . $qty : $qty;
+
+                $price = number_format($orderItem->price, 2, ',', '.');
+                $price = '';// str_pad($price, $priceChar, '.', STR_PAD_LEFT) . 'R$';
+
+                $itemLine = "${qty}   ${item}";
+
+                $padLen = $maxChar - strlen($itemLine) - 1;
+
+                $itemLine = $itemLine . str_pad($price, $padLen, ' ', STR_PAD_LEFT);
+
+                $printer->text("${itemLine}\n");
+
+                if (!$subItem && !empty($obs)) {
+                    $printer->text("Obs: ${obs}\n");
+                }
+            };
+
+            $orderItems->each(function (OrderItem $orderItem) use ($printOrderItem, $printer, $maxChar, $itemsAllowed) {
                 $printOrderItem($orderItem, $printer);
-                $orderItem->children()->whereIn('id', $itemsAllowed)->whereNotNull('parent_id')
-                    ->each(function (OrderItem $orderItem) use ($printOrderItem, $printer) {
-                        $printOrderItem($orderItem, $printer, true);
-                    });
-                $printer->selectPrintMode(Printer::MODE_EMPHASIZED);
-                $printer->text(str_pad('', $maxChar, '-'));
-                $printer->selectPrintMode();
+                $orderItem->childrenToPrint($itemsAllowed)->each(function (OrderItem $orderItem) use ($printOrderItem, $printer) {
+                    $printOrderItem($orderItem, $printer, true);
+                });
+                $printer->text(str_pad('', $maxChar, '.'));
             });
 
-        $printer->feed();
-        $printer->text("Abertura: {$createdAt}\n");
-        $printer->feed(2);
-        $printer->cut();
-        $printer->close();
+            $printer->feed();
+            $printer->text("Abertura: {$createdAt}\n");
+            $printer->feed(2);
+            $printer->cut();
+            $printer->close();
+        } catch (\Exception $exception) {
+            Log::error($exception->getMessage(), ['exception' => $exception]);
+            throw new ApiException('exception', 'Oops! Falha ao realizar impressão.', 400, [
+                'details' => $exception->getMessage()
+            ]);
+        }
     }
 }

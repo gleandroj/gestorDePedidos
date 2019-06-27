@@ -28,8 +28,7 @@ class OrderItemController extends Controller
      */
     public function store(Order $order, CreateOrUpdateOrderItemRequest $request)
     {
-        $data = collect($request->validated());
-        return new OrderItemResource($order->orderItems()->create($data->all()));
+        return new OrderItemResource($order->orderItems()->create($request->validated()));
     }
 
     /**

@@ -10,6 +10,8 @@ import {OrderItemService} from '../../../core/services/order-item.service';
 import {ItemService} from '../../../core/services';
 import {ToastService} from '../../../support/services';
 import {MatDialog} from '@angular/material';
+import {HttpErrorResponse} from '@angular/common/http';
+import {ApiException} from '../../../support/interfaces/api-exception';
 
 @Component({
     selector: 'app-table-items',
@@ -42,8 +44,9 @@ export class TableItemsComponent {
     print() {
         this.orderService.print(this.order, this.selected).subscribe(() => {
             this.toastr.open('Impressão finalizada!');
-        }, () => {
-            this.toastr.open('Oops! Falha ao realizar impressão.');
+        }, (response: HttpErrorResponse) => {
+            const err = response.error as ApiException<any>;
+            this.toastr.open(err.message);
         });
     }
 
