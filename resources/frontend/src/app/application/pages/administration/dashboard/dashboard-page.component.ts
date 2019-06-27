@@ -120,7 +120,7 @@ export class DashboardPageComponent extends AbstractTableComponent<any> implemen
         super.refresh();
         this.dashboardService.data(this.filter).pipe(
             take(1),
-            tap(data => console.log(this.data = data)),
+            tap(data => this.data = data),
             tap(() => this.createChart())
         ).subscribe();
     }

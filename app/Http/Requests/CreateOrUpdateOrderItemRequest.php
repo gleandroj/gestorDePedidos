@@ -28,6 +28,7 @@ class CreateOrUpdateOrderItemRequest extends FormRequest
     {
         return [
             'item_id' => ['required', Rule::exists('items', 'id')],
+            'parent_id' => ['required', Rule::exists('order_items', 'id')],
             'quantity' => ['required', 'min:1', 'numeric'],
             'price' => ['required', 'min:0', 'numeric'],
             'cost' => ['required', 'min:0', 'numeric'],
