@@ -122,7 +122,7 @@ export class TableItemsComponent {
                     order: this.order,
                     orderItem: {
                         ...item,
-                        parent_id: parent && parent.id
+                        parent_id: item.parent_id || parent && parent.id
                     },
                     title: title,
                     items: this.items,

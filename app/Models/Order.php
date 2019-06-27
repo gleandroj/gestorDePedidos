@@ -86,11 +86,23 @@ class Order extends AbstractModel
      */
     public function print($itemsAllowed = [])
     {
-
         //A 32 B 44
+        //2 espaços + 2 do R$
+        $withPrice = false;
         $maxChar = 32;
+        $qtyChar = 4;
+        $priceChar = 8;
+        $maxItemChar = 16;
+        $maxItemChar = $withPrice ? $maxItemChar : $maxItemChar + $priceChar + 3;
+
         $font = Printer::FONT_A;
         $orderItems = $this->orderItemsToPrint($itemsAllowed);
+
+        $total = $orderItems->reduce(function ($total, OrderItem $orderItem) {
+            return $total += $orderItem->computedPrice();
+        }, 0);
+        $total = number_format($total, 2, ',', '.');
+        $total = str_pad($total, ($maxChar - 9), ' ', STR_PAD_LEFT) . 'R$';
 
         if ($orderItems->count() === 0) {
             throw new ApiException('empty_table', 'Nenhum item selecionado ou cadastrado na mesa.', 400);
@@ -121,30 +133,30 @@ class Order extends AbstractModel
             $printer->setJustification(Printer::JUSTIFY_LEFT);
 
             /** Items */
-            $printOrderItem = function (OrderItem $orderItem, Printer $printer, $subItem = false) use ($maxChar) {
-                $item = $orderItem->item->description;
-                $qtyChar = 3;
-                $priceChar = 5;
+            $printOrderItem = function (OrderItem $orderItem, Printer $printer, $subItem = false) use ($withPrice, $maxItemChar, $maxChar, $qtyChar, $priceChar) {
+                $item = substr($orderItem->item->description, 0, $maxItemChar);
 
                 $qty = str_pad($orderItem->quantity . 'x', $qtyChar, ' ', STR_PAD_RIGHT);
 
                 $obs = substr($orderItem->observation, 0, $maxChar);
 
-                $qty = $subItem ? '' . $qty : $qty;
+                if ($withPrice) {
+                    $price = number_format($orderItem->price, 2, ',', '.');
+                    $price = str_pad($price, $priceChar, ' ', STR_PAD_LEFT) . 'R$';
+                } else {
+                    $price = '';
+                }
 
-                $price = number_format($orderItem->price, 2, ',', '.');
-                $price = '';// str_pad($price, $priceChar, '.', STR_PAD_LEFT) . 'R$';
-
-                $itemLine = "${qty}   ${item}";
+                $itemLine = "${qty} ${item}";
 
                 $padLen = $maxChar - strlen($itemLine) - 1;
 
-                $itemLine = $itemLine . str_pad($price, $padLen, ' ', STR_PAD_LEFT);
+                $itemLine = $itemLine . ($withPrice ? ' ' : '') . str_pad($price, $padLen, ' ', STR_PAD_LEFT);
 
                 $printer->text("${itemLine}\n");
 
                 if (!$subItem && !empty($obs)) {
-                    $printer->text("Obs: ${obs}\n");
+                    $printer->text("Obs:  ${obs}\n");
                 }
             };
 
@@ -153,10 +165,17 @@ class Order extends AbstractModel
                 $orderItem->childrenToPrint($itemsAllowed)->each(function (OrderItem $orderItem) use ($printOrderItem, $printer) {
                     $printOrderItem($orderItem, $printer, true);
                 });
+                $createdAt = $orderItem->created_at->format('d/m/Y H:i:s');
+                $createdAt = str_pad($createdAt, $maxChar - 6, ' ', STR_PAD_LEFT);
+                $printer->feed();
+                $printer->text("Hora: {$createdAt}\n");
                 $printer->text(str_pad('', $maxChar, '.'));
             });
 
             $printer->feed();
+            if ($withPrice) {
+                $printer->text("Total: {$total}\n");
+            }
             $printer->text("Abertura: {$createdAt}\n");
             $printer->feed(2);
             $printer->cut();

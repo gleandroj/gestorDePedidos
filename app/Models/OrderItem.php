@@ -29,7 +29,10 @@ class OrderItem extends AbstractModel
      */
     public function computedPrice()
     {
-        return $this->price - $this->discount;
+        $price = $this->price - $this->discount;
+        return $this->children()->get()->reduce(function ($total, OrderItem $orderItem) {
+            return $total += $orderItem->computedPrice();
+        }, $price);
     }
 
     /**

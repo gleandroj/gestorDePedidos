@@ -1,22 +1,22 @@
 @import "../../../../less/variables";
 
 :host {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-  flex: 100;
-
   .order-item {
     border-radius: 6px;
-    //border-bottom: dashed #666 2px;
-    margin: 0 5px 10px 5px;
     position: relative;
+  }
+
+  /deep/ .mat-list-item-content {
+    padding: 0 0 0 16px !important;
   }
 
   mat-dialog-content {
     overflow: auto !important;
     max-height: 65vh !important;
+  }
+
+  /deep/.mat-list-base{
+    padding-top: 0 !important;
   }
 
   mat-list-item {
