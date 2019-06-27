@@ -37,8 +37,12 @@ class DashboardController extends Controller
             ->selectRaw(join(',', [
                 'sum(price) as balance',
                 'sum(cost) as cost',
-                'sum(discount) as discount',
-                'to_char(avg(order_items.finalized_at - order_items.created_at), \'MI"min"  SS"s"\') as time_avg',
+                'sum(discount) as discount'
+            ]))->first();
+
+        $timeAvg = OrderItem::query()
+            ->selectRaw(join(',', [
+                'concat(extract(epoch from avg(order_items.finalized_at - order_items.created_at))::int/60, \'m\') as time_avg',
             ]))->first();
 
         $ordersCount = Order::query()
@@ -81,7 +85,7 @@ class DashboardController extends Controller
             'balance' => $computed['balance'] ?? 0,
             'cost' => $computed['cost'] ?? 0,
             'discount' => $computed['discount'] ?? 0,
-            'time_avg' => $computed['time_avg'] ?? '-',
+            'time_avg' => $timeAvg['time_avg'] ?? '-',
             'chart' => [
                 'format' => $groupBy === 'day' ? $dayFormat : ($groupBy === 'month' ? $montFormat : $yearFormat),
                 'labels' => collect($report->pluck('created_at'))->map(function ($data) {

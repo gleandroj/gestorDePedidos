@@ -75,7 +75,8 @@ export class TablesComponent implements OnDestroy, OnInit, OnChanges {
     refresh(first?: boolean) {
         const filter = {
             ...this.filter,
-            updated_at: this.lastUpdatedAt
+            updated_at: this.lastUpdatedAt,
+            show_finalized: this.showFinalized
         };
         this.loading = first;
         this.orderService.all(filter).pipe(
