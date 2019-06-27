@@ -40,8 +40,10 @@ export class TableItemsComponent {
     }
 
     print() {
-        this.orderService.print(this.order).subscribe(() => {
-            this.toastr.open('Done!');
+        this.orderService.print(this.order, this.selected).subscribe(() => {
+            this.toastr.open('Impressão finalizada!');
+        }, () => {
+            this.toastr.open('Oops! Falha ao realizar impressão.');
         });
     }
 
@@ -61,10 +63,16 @@ export class TableItemsComponent {
 
     select(orderItem: OrderItemEntity) {
         this.selected.push(orderItem);
+        if (orderItem.children) {
+            orderItem.children.forEach(child => this.selected.push(child));
+        }
     }
 
     unselect(orderItem: OrderItemEntity) {
         this.selected.splice(this.selected.indexOf(orderItem), 1);
+        if (orderItem.children) {
+            orderItem.children.forEach(child => this.selected.splice(this.selected.indexOf(child), 1));
+        }
     }
 
     toggleSelect(orderItem: OrderItemEntity, event: Event | any) {
@@ -117,7 +125,8 @@ export class TableItemsComponent {
                     items: this.items,
                     allowObservation: !!!parent
                 },
-                panelClass: ['dialog-fullscreen', 'no-padding']
+                panelClass: ['dialog-fullscreen', 'no-padding'],
+                disableClose: true
             }
         ).afterClosed().subscribe((newItem) => {
             if (newItem && item.id) {

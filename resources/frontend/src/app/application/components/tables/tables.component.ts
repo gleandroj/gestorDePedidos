@@ -119,7 +119,8 @@ export class TablesComponent implements OnDestroy, OnInit, OnChanges {
                 data: {
                     order: order,
                     title: title
-                }
+                },
+                disableClose: true
             }
         ).afterClosed().subscribe((newOrder: OrderEntity) => {
             if (newOrder && order.id) {
@@ -167,7 +168,8 @@ export class TablesComponent implements OnDestroy, OnInit, OnChanges {
                         order: order,
                         items: this.menus
                     },
-                    panelClass: ['dialog-receipt', 'no-border-radius']
+                    panelClass: ['dialog-receipt', 'no-border-radius'],
+                    disableClose: true
                 }
             ).afterClosed().subscribe((finalized: OrderEntity) => {
                 if (finalized) {

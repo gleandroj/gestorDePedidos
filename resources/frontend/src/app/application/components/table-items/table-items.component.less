@@ -78,7 +78,7 @@
   position: relative;
 
   &.selecting {
-    padding: 0 0 0 16px;
+    padding: 0 0 0 16px !important;
   }
 
   & mat-list-item {
@@ -88,8 +88,16 @@
 
 .order-item-child {
   position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0;
 
-  .item-quantity {
+  &.selecting {
+    padding: 0 0 0 16px !important;
+  }
+
+  /deep/ .item-quantity {
     font-size: 16px !important;
   }
 
@@ -97,7 +105,7 @@
     font-size: 16px !important;
   }
 
-  .item-description {
+  /deep/ .item-description {
     font-size: 16px !important;
   }
 }

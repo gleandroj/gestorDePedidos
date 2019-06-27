@@ -14,6 +14,7 @@ use Bufallus\Models\Order;
 use Bufallus\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
@@ -114,13 +115,14 @@ class OrderController extends Controller
     /**
      * Remove the specified resource from storage.
      *
+     * @param Request $request
      * @param Order $order
      * @return array
      * @throws \Exception
      */
-    public function print(Order $order)
+    public function print(Request $request, Order $order)
     {
-        $order->print();
+        $order->print($request->get('items_to_print'));
         return [
             'success' => true
         ];
