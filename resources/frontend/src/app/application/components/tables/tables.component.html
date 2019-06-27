@@ -1,0 +1,64 @@
+<div class="mat-toolbar-fab-buttom">
+    <button mat-fab color="accent" (click)="edit({}, 'Abrir mesa')">
+        <mat-icon>add</mat-icon>
+    </button>
+</div>
+
+<mat-accordion>
+    <mat-expansion-panel hideToggle [expanded]="i === 0 && !!!order.finalized_at"
+                         *ngFor="let order of filteredOrders; let i = index;">
+
+        <mat-expansion-panel-header [ngClass]="{'is-done': !!order.finalized_at}" class="tables-header">
+            <mat-panel-title class="table-title">
+                <mat-icon class="push-10-r">restaurant</mat-icon>
+                <span class="mat-subheader">Mesa {{ order.table }}</span>
+            </mat-panel-title>
+            <mat-panel-description class="tables-item">
+                <span style="flex: 1;"></span>
+                <button style="border-radius: 0; align-self: center;" mat-raised-button mat-icon-button
+                        color="accent"
+                        (click)="$event.stopPropagation() || tableItemsComponent.editItem({}, 'Adicionar Item')">
+                    <mat-icon>add</mat-icon>
+                </button>
+                <button style="align-self: center;" mat-icon-button [matMenuTriggerFor]="tableMenu"
+                        (click)="$event.stopPropagation()">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #tableMenu="matMenu">
+                    <button mat-menu-item (click)="tableItemsComponent.print()">
+                        Imprimir
+                    </button>
+                    <button mat-menu-item (click)="finalizeOrOpen(order, !!!order.finalized_at)">
+                        {{ !!order.finalized_at ? 'Reabrir' : 'Fechar' }} mesa
+                    </button>
+                    <button mat-menu-item (click)="edit(order, 'Editar mesa')">
+                        Editar mesa
+                    </button>
+                    <button mat-menu-item (click)="cancel(order)">
+                        Cancelar mesa
+                    </button>
+                </mat-menu>
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <app-table-items
+            #tableItemsComponent
+            [items]="menus"
+            [order]="order"></app-table-items>
+
+        <mat-action-row class="table-footer">
+            <b>Hora:&nbsp;</b> {{ order.created_at | date:'HH:mm:ss' }}
+            | {{ duration(order.created_at, order.finalized_at) }}
+            <span style="flex: 1;"></span>
+            <b>Total: </b> {{ orderPrice(order) | number: '1.2-2' }}R$
+        </mat-action-row>
+
+    </mat-expansion-panel>
+</mat-accordion>
+
+<ng-container *ngIf="!loading && (filteredOrders?.length === 0)">
+    <div class="mat-typography" style="text-align: center;">
+        <h2 style="color: rgba(0, 0, 0, .4)">Ainda não há pedidos</h2>
+    </div>
+    <img class="img-responsive" src="assets/img/empty-state-burger.png">
+</ng-container>

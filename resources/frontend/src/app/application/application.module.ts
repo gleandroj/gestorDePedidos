@@ -36,7 +36,9 @@ const DialogComponents = [
 const Components = [
     ...PagesComponents,
     ...DialogComponents,
-    AppComponents.ImgInputComponent
+    AppComponents.ImgInputComponent,
+    AppComponents.TablesComponent,
+    AppComponents.TableItemsComponent
 ];
 
 @NgModule({

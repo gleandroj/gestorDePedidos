@@ -1,17 +1,17 @@
-import { ChangeDetectorRef, Component, Inject, OnDestroy } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { ToastService } from '../../../support/services';
-import { HttpErrorResponse } from '@angular/common/http';
-import { OrderEntity } from '../../../core/entities/order-entity';
-import { OrderService } from '../../../core/services/order.service';
-import { ItemEntity } from '../../../core/entities/item-entity';
-import { ItemService } from '../../../core/services';
-import { OrderItemEntity } from '../../../core/entities/order-item-entity';
-import { Subject } from 'rxjs';
+import {ChangeDetectorRef, Component, Inject, OnDestroy} from '@angular/core';
+import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
+import {ToastService} from '../../../support/services';
+import {HttpErrorResponse} from '@angular/common/http';
+import {OrderEntity} from '../../../core/entities/order-entity';
+import {OrderService} from '../../../core/services/order.service';
+import {ItemEntity} from '../../../core/entities/item-entity';
+import {ItemService} from '../../../core/services';
+import {OrderItemEntity} from '../../../core/entities/order-item-entity';
+import {Subject} from 'rxjs';
 
 interface DialogOptions {
-    order?: OrderEntity;
-    items?: ItemEntity[];
+    order: OrderEntity;
+    items: ItemEntity[];
 }
 
 @Component({
@@ -23,8 +23,9 @@ interface DialogOptions {
 })
 export class CloseOrderFormDialogComponent implements OnDestroy {
     loading = false;
-    order: Partial<OrderEntity>;
-    allItems: ItemEntity[] = [];
+    order: Partial<OrderEntity> = {};
+    orderItems: OrderItemEntity[] = [];
+    items: ItemEntity[] = [];
     $destroyed = new Subject();
 
     constructor(
@@ -35,49 +36,53 @@ export class CloseOrderFormDialogComponent implements OnDestroy {
         public changeRef: ChangeDetectorRef,
         @Inject(MAT_DIALOG_DATA) public data: DialogOptions
     ) {
-        this.order = data.order ? Object.assign({}, data.order) : {};
-        this.allItems = data.items || [];
+        this.order = Object.assign({
+            id: data.order.id,
+            table: data.order.table,
+            is_done: data.order.is_done
+        });
+        this.orderItems = data.order.items.slice();
+        this.items = data.items;
     }
 
-    get items() {
-        return this.order.items;
+    orderItemPrice(parent: OrderItemEntity) {
+        return parent.children.reduce((total, orderItem: OrderItemEntity) => {
+            return total += orderItem.price;
+        }, parent.price);
     }
 
     get totalComputedPrice() {
-        return this.items.reduce((total, value) => {
-            const currValue = value as OrderItemEntity;
-            return total += ((currValue.price ? currValue.price : 0) - (currValue.discount ? currValue.discount : 0));
+        return this.orderItems.reduce((total, orderItem) => {
+            return total += this.orderItemPrice(orderItem);
         }, 0);
     }
 
-    getItemById(id) {
-        return this.allItems.find(i => i.id === id);
+    getItemById(id: number) {
+        return this.items.find(m => m.id === id);
     }
 
     save() {
         this.order.is_done = this.loading = true;
-        this.order.items.forEach(i => i.is_done = true);
-
         this.orderService.save(this.order).subscribe((order) => {
             this.loading = false;
             this.toastr.open(
-                'Pedido finalizado com sucesso!'
+                'Mesa finalizada com sucesso!'
             );
             this.dialogRef.close(order);
         }, (response: HttpErrorResponse) => {
             this.loading = false;
             this.toastr.open(
-                'Falha ao finalizar o pedido!'
+                'Falha ao finalizar a mesa!'
             );
         });
+    }
+
+    cancel() {
+        this.dialogRef.close(false);
     }
 
     ngOnDestroy(): void {
         this.$destroyed.next();
         this.$destroyed.complete();
-    }
-
-    cancel() {
-        this.dialogRef.close(false);
     }
 }

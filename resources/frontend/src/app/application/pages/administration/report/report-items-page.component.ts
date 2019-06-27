@@ -1,9 +1,9 @@
 import {Component} from '@angular/core';
-import {ReportItemsService} from '../../../core/services';
-import {ItemEntity} from '../../../core/entities/item-entity';
+import {ReportItemsService} from '../../../../core/services';
+import {ItemEntity} from '../../../../core/entities/item-entity';
 import {MatDialog} from '@angular/material';
-import {AbstractTableComponent} from '../../components';
-import {ToastService} from '../../../support/services';
+import {AbstractTableComponent} from '../../../components';
+import {ToastService} from '../../../../support/services';
 import {tap} from 'rxjs/operators';
 
 @Component({

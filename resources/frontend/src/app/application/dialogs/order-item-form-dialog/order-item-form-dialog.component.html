@@ -1,15 +1,15 @@
 <mat-vertical-stepper #stepper
-    (selectionChange)="$event.selectedIndex === 4 ? saveBtn.focus() : null">
+                      (selectionChange)="$event.selectedIndex === 4 ? saveBtn.focus() : null">
     <mat-step [stepControl]="form">
         <form [formGroup]="form">
             <ng-template matStepLabel>Selecione o item</ng-template>
             <mat-form-field>
                 <mat-select formControlName="item_id" required placeholder="Selecione o item"
-                    disableOptionCentering
-                    (selectionChange)="stepper.next()">
+                            disableOptionCentering
+                            (selectionChange)="stepper.next()">
                     <mat-option>
                         <ngx-mat-select-search (input)="filter($event)" [noEntriesFoundLabel]="'Nenhum item disponível'"
-                            placeholderLabel="Selecione o item">
+                                               placeholderLabel="Selecione o item">
                             <mat-icon ngxMatSelectSearchClear (click)="clear()">
                                 close
                             </mat-icon>
@@ -42,7 +42,7 @@
             </div>
         </form>
     </mat-step>
-    <mat-step [stepControl]="form">
+    <mat-step *ngIf="allowObservation" [stepControl]="form">
         <form [formGroup]="form">
             <ng-template matStepLabel>Adicione as observações</ng-template>
             <mat-form-field>
@@ -61,25 +61,25 @@
             <div style="display: flex; flex-direction: row;">
                 <mat-form-field style="width: calc(70% - 10px);  margin-right: 10px;">
                     <input matInput placeholder="Item" type="text" [disabled]="true"
-                        [value]="getItemById(form.get('item_id').value)?.description">
+                           [value]="getItemById(form.get('item_id').value)?.description">
                 </mat-form-field>
                 <mat-form-field style="width: 30%;">
                     <input matInput placeholder="Qtd." type="text" [disabled]="true"
-                        [value]="form.get('quantity').value">
+                           [value]="form.get('quantity').value">
                 </mat-form-field>
             </div>
 
             <div style="display: flex; flex-direction: row;">
                 <mat-form-field style="width: 100%; margin-right: 10px;">
                     <input matInput placeholder="Total" type="text" [disabled]="true"
-                        [value]="(form.get('price')?.value - form.get('discount')?.value) | number: '1.2-2'">
+                           [value]="(form.get('price')?.value - form.get('discount')?.value) | number: '1.2-2'">
                     <span matSuffix>R$</span>
                 </mat-form-field>
             </div>
 
             <mat-form-field style="width: 100%;" *ngIf="form.get('observation').value">
                 <input matInput placeholder="Observação" type="text" [disabled]="true"
-                    [value]="form.get('observation').value">
+                       [value]="form.get('observation').value">
             </mat-form-field>
         </form>
     </mat-step>
@@ -89,5 +89,6 @@
     <button mat-button (click)="cancel()">Cancelar</button>
     <span style="flex: 1;"></span>
     <button #saveBtn mat-button mat-raised-button [disabled]="form.invalid" color="accent"
-        (click)="save()">Salvar</button>
+            (click)="save()">Salvar
+    </button>
 </mat-dialog-actions>

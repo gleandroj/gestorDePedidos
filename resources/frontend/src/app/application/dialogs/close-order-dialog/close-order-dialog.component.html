@@ -1,21 +1,49 @@
-<h2 mat-dialog-title class="text-center" style="margin: 0 0 20px -10px">Mesa {{ order.table }}</h2>
+<h2 mat-dialog-title class="text-center" style="margin: 0 0 20px -10px">
+    Mesa {{ order.table }}
+</h2>
 <mat-dialog-content class="mat-typography order-form">
     <mat-card-content fxLayout="column">
         <h3 class="mat-subheading-1" style="margin: 0 0 0 -10px">
             <strong>Itens</strong>
         </h3>
         <div class="text-center" *ngIf="items.length === 0">
-            <h4 class="text-center">Nenhum item no pedido</h4>
+            <h4 class="text-center">Nenhum item na mesa</h4>
         </div>
         <mat-action-list style="margin: 0 -10px 0 -20px;">
-            <mat-list-item disableRipple class="order-item mat-typography" *ngFor="let item of items; let i = index;">
-                <span class="push-5-r"> {{ item.quantity }}x </span>
-                <span style="flex: 1"></span>
-                <span>{{ getItemById(item.item_id)?.description }}</span>
-                <span style="flex: 1"></span>
-                <span class="push-10-r" style="width: auto; white-space: nowrap;">
+            <div class="order-item" *ngFor="let item of orderItems;">
+                <mat-list-item disableRipple class="mat-typography">
+                    <span class="push-5-r"> {{ item.quantity }}x </span>
+                    <span style="flex: 1"></span>
+                    <span>{{ getItemById(item.item_id)?.description }}</span>
+                    <span style="flex: 1"></span>
+                    <span class="push-10-r" style="width: auto; white-space: nowrap;">
                     {{ (item.price || 0) - (item.discount || 0) | number: '1.2-2' }} R$
                 </span>
+                </mat-list-item>
+                <mat-action-list *ngIf="item?.children?.length > 0">
+                    <mat-list-item disableRipple class="mat-typography"
+                                   *ngFor="let subitem of item.children;">
+                        <div class="push-5-r"> {{ subitem.quantity }}x</div>
+                        <div style="flex: 1"></div>
+                        <div>{{ getItemById(subitem.item_id)?.description }}</div>
+                        <div style="flex: 1"></div>
+                        <div class="push-10-r" style="width: auto; white-space: nowrap;">
+                            {{ (subitem.price || 0) - (subitem.discount || 0) | number: '1.2-2' }} R$
+                        </div>
+                    </mat-list-item>
+                    <mat-divider></mat-divider>
+                    <mat-list-item disableRipple>
+                        <b style="font-size: 15px;">Subtotal:</b>
+                        <div style="flex: 1"></div>
+                        <div class="push-10-r" style="width: auto; white-space: nowrap;">
+                            {{ orderItemPrice(item) | number: '1.2-2' }} R$
+                        </div>
+                    </mat-list-item>
+                </mat-action-list>
+            </div>
+
+            <mat-list-item disableRipple class="mat-typography text-center" *ngIf="orderItems?.length === 0">
+                Nenhum item selecionado ou cadastrado na mesa.
             </mat-list-item>
         </mat-action-list>
 

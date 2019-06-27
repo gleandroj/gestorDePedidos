@@ -1,10 +1,10 @@
 import {AfterViewInit, Component, ElementRef, OnDestroy, ViewChild} from '@angular/core';
 import {Subject} from 'rxjs';
-import {ToastService} from '../../../support/services';
+import {ToastService} from '../../../../support/services';
 import {MatDialog} from '@angular/material';
 import * as Highcharts from 'highcharts';
-import {AbstractTableComponent} from '../../components';
-import {DashboardService} from '../../../core/services';
+import {AbstractTableComponent} from '../../../components';
+import {DashboardService} from '../../../../core/services';
 import {take} from 'rxjs/internal/operators/take';
 import {tap} from 'rxjs/internal/operators/tap';
 
@@ -27,7 +27,8 @@ export class DashboardPageComponent extends AbstractTableComponent<any> implemen
         chart: {labels: [], series: [], format: '{value:%d/%m/%Y}'},
         cost: 0,
         discount: 0,
-        orders_count: 0
+        orders_count: 0,
+        time_avg: '-'
     };
 
     displayedColumns: string[] = ['position', 'description', 'quantity'];
@@ -37,7 +38,7 @@ export class DashboardPageComponent extends AbstractTableComponent<any> implemen
         private dashboardService: DashboardService,
         dialogService: MatDialog
     ) {
-        super(dialogService, {group: 'day', interval: [new Date(), new Date()] });
+        super(dialogService, {group: 'day', interval: [new Date(), new Date()]});
         this.refresh();
     }
 
@@ -119,7 +120,7 @@ export class DashboardPageComponent extends AbstractTableComponent<any> implemen
         super.refresh();
         this.dashboardService.data(this.filter).pipe(
             take(1),
-            tap(data => this.data = data),
+            tap(data => console.log(this.data = data)),
             tap(() => this.createChart())
         ).subscribe();
     }

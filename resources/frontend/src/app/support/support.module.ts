@@ -110,6 +110,7 @@ const declarations = [
     Directives.EqualValidator,
     Directives.CheckAvailableValidator,
     Directives.DateValidator,
+    Directives.LongPressDirective,
     Pipes.Safe
 ];
 

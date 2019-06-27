@@ -29,7 +29,7 @@ class OrderItemController extends Controller
     public function store(Order $order, CreateOrUpdateOrderItemRequest $request)
     {
         $data = collect($request->validated());
-        return new OrderItemResource($order->items()->create($data->all()));
+        return new OrderItemResource($order->orderItems()->create($data->all()));
     }
 
     /**
@@ -46,6 +46,7 @@ class OrderItemController extends Controller
         } else {
             $data['finalized_at'] = null;
         }
+        $orderItem->children()->update(['finalized_at' => $data['finalized_at']]);
         $orderItem->update($data->all());
         return new OrderItemResource($orderItem->fresh());
     }

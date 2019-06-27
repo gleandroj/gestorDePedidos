@@ -22,7 +22,12 @@ class TestTableSeeder extends Seeder
                 'order_id' => $order->getKey(),
                 'created_at' => \Carbon\Carbon::now()->subDay($i),
                 'updated_at' => \Carbon\Carbon::now()->subDay($i)
-            ]);
+            ])->each(function (OrderItem $orderItem) {
+                factory(OrderItem::class, rand(1, 2))->create([
+                    'order_id' => $orderItem->order_id,
+                    'parent_id' => $orderItem->getKey()
+                ]);
+            });
         }
     }
 }

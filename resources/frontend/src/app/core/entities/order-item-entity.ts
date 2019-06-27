@@ -8,4 +8,7 @@ export interface OrderItemEntity extends BaseEntity {
     cost: number;
     discount: number;
     observation: string;
+    finalized_at: string;
+    parent_id: number;
+    children?: OrderItemEntity[];
 }

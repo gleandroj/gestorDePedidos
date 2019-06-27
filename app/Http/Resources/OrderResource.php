@@ -8,6 +8,8 @@
 
 namespace Bufallus\Http\Resources;
 
+use Bufallus\Models\Order;
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
@@ -22,14 +24,15 @@ class OrderResource extends JsonResource
      */
     public function toArray($request)
     {
+        /** @var Order $order */
+        $order = $this->resource;
         return [
             "id" => $this->id,
-            "created_at" => $this->created_at,
-            "updated_at" => $this->updated_at,
             "table" => $this->table,
             "finalized_at" => $this->finalized_at,
-            "is_done" => !!$this->finalized_at,
-            "items" => OrderItemResource::collection($this->items)
+            "created_at" => $this->created_at,
+            "updated_at" => $this->updated_at,
+            "items" => OrderItemResource::collection($order->orderItems(true)->get())
         ];
     }
 }

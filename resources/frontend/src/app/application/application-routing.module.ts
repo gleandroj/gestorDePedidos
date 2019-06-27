@@ -10,6 +10,7 @@ import {
     ItemsPageComponent, OrdersPageComponent, DashboardPageComponent, ReportItemsPageComponent,
 } from './pages';
 import {AuthGuard} from '../core/guards/auth-guard';
+import {ItemService} from '../core/services';
 
 const routes: Routes = [
     {
@@ -90,6 +91,9 @@ const routes: Routes = [
                                 'administrator'
                             ],
                             breadcrumb: 'Gerenciar Pedidos'
+                        },
+                        resolve: {
+                            menus: ItemService
                         }
                     }
                 ]

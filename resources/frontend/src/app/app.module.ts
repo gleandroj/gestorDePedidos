@@ -8,7 +8,7 @@ import { CoreModule } from './core/core.module';
 import { ApplicationModule } from './application/application.module';
 import { registerLocaleData } from '@angular/common';
 import localePt from '@angular/common/locales/pt';
-import { ServiceWorkerModule } from "@angular/service-worker";
+import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 
 registerLocaleData(localePt);

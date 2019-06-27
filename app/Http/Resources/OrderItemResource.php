@@ -14,17 +14,23 @@ class OrderItemResource extends JsonResource
 {
     public function toArray($request)
     {
-        return [
+        $data = [
             "id" => $this->id,
             "item_id" => $this->item_id,
+            "parent_id" => $this->parent_id,
             "quantity" => floatval($this->quantity),
-            "created_at" => $this->created_at,
-            "finalized_at" => $this->finalized_at,
-            "is_done" => !!$this->finalized_at,
             "price" => floatval($this->price),
             "cost" => floatval($this->cost),
             "discount" => floatval($this->discount),
-            "observation" => $this->observation
+            "observation" => $this->observation,
+            "created_at" => $this->created_at,
+            "finalized_at" => $this->finalized_at
         ];
+        if (empty($this->parent_id)) {
+            $data = array_merge($data, [
+                'children' => OrderItemResource::collection($this->children)
+            ]);
+        }
+        return $data;
     }
 }

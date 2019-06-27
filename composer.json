@@ -20,6 +20,7 @@
         "laravel/tinker": "^1.0",
         "league/flysystem-aws-s3-v3": "~1.0",
         "maatwebsite/excel": "^3.1",
+        "mike42/escpos-php": "^2.1",
         "paragonie/random_compat": "^2.0",
         "sentry/sentry-laravel": "^0.11.0",
         "simplesoftwareio/simple-qrcode": "^2.0"

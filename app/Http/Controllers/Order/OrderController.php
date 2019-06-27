@@ -12,6 +12,10 @@ use Bufallus\Http\Requests\CreateOrUpdateOrderRequest;
 use Bufallus\Http\Resources\OrderResource;
 use Bufallus\Models\Order;
 use Bufallus\Http\Controllers\Controller;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 
 /**
@@ -23,7 +27,7 @@ class OrderController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     * @return Builder[]|Collection|AnonymousResourceCollection
      */
     public function index()
     {
@@ -50,7 +54,7 @@ class OrderController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param \Bufallus\Models\Order $order
+     * @param Order $order
      * @return OrderResource|Order
      */
     public function show(Order $order)
@@ -62,61 +66,47 @@ class OrderController extends Controller
      * Store a newly created resource in storage.
      *
      * @param CreateOrUpdateOrderRequest $request
-     * @return \Illuminate\Http\Response|OrderResource
+     * @return Response|OrderResource
      */
     public function store(CreateOrUpdateOrderRequest $request)
     {
-        $order = new Order($request->only('table'));
-        tap($order)->save()->items()->createMany(collect($request->get('items'))->map($this->mapItemFn())->all());
-        return new OrderResource($order->refresh());
+        return new OrderResource(Order::query()->create($request->validated()));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param CreateOrUpdateOrderRequest $request
-     * @param \Bufallus\Models\Order $order
-     * @return \Illuminate\Http\Response|OrderResource|Order
+     * @param Order $order
+     * @return Response|OrderResource|Order
      */
     public function update(CreateOrUpdateOrderRequest $request, Order $order)
     {
         $data = $request->except('items');
         $isDone = $request->get('is_done', false);
-        $items = collect($request->get('items', []));
 
         if ($isDone) {
             $data['finalized_at'] = Carbon::now();
+            $order->orderItems()->whereNull('finalized_at')->update(['finalized_at' => $data['finalized_at']]);
         } else {
             $data['finalized_at'] = null;
         }
 
         tap($order)->touch()->update(array_except($data, ['is_done']));
 
-        $order->items()->whereNotIn('id', $items->pluck('id')->filter()->all())->delete();
-
-        $items->map($this->mapItemFn())->each(function ($item) use ($isDone, $order) {
-            if (!empty($item['is_done']) && $item['is_done'] || $isDone) {
-                $item['finalized_at'] = Carbon::now();
-            } else {
-                $item['finalized_at'] = null;
-            }
-            $order->items()->updateOrCreate([
-                'id' => $item['id'] ?? null
-            ], array_except($item, ['is_done']));
-        });
         return new OrderResource($order->refresh());
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param \Bufallus\Models\Order $order
+     * @param Order $order
      * @return array
      * @throws \Exception
      */
     public function destroy(Order $order)
     {
-        $order->items()->delete();
+        $order->orderItems()->delete();
         return [
             'success' => boolval($order->delete())
         ];

@@ -31,15 +31,25 @@ class Order extends AbstractModel
             ->whereBetween('created_at', $interval)
             ->orderBy('created_at', 'asc');
 
-        if (!empty($lastUpdated) && !$showFinalized) {
+        if (!empty($lastUpdated)) {
             $q->where('updated_at', '>=', Carbon::parse($lastUpdated)->setTimezone(config('app.timezone')));
         }
 
-        return $q->get();
+        return $q->orderBy('created_at', 'asc')->get();
     }
 
-    public function items()
+    /**
+     * @param bool $onlyParents
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function orderItems($onlyParents = false)
     {
-        return $this->hasMany(OrderItem::class);
+        $q = $this->hasMany(OrderItem::class)->orderBy('created_at', 'asc');
+
+        if ($onlyParents) {
+            $q->whereNull('parent_id');
+        }
+
+        return $q;
     }
 }

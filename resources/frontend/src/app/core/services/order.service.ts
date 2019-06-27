@@ -17,4 +17,11 @@ export class OrderService extends AbstractService<OrderEntity> {
             `${this.baseURL}/${this.resourceURL}?${parameters}`
         ).pipe(map((r) => r.data));
     }
+
+    print(order: OrderEntity) {
+        return this.http.post<ApiResponse<OrderEntity[]>>(
+            `${this.baseURL}/${this.resourceURL}/${order.id}/print`,
+            {}
+        ).pipe(map((r) => r.data));
+    }
 }

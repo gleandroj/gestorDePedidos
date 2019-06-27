@@ -10,11 +10,13 @@ services:
       POSTGRES_PASSWORD: forge
   api:
     image: gleandroj/laravel:slim
+    privileged: true
     ports:
       - "80:80"
       - "4444:4444"
       - "8080:8080"
     volumes:
       - .:/home/deploy/app:Z
+      - "/var/run/cups:/var/run/cups:ro"
     depends_on:
       - db
