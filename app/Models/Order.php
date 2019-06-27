@@ -4,6 +4,12 @@ namespace Bufallus\Models;
 
 use Carbon\Carbon;
 
+use Mike42\Escpos\CapabilityProfile;
+use Mike42\Escpos\EscposImage;
+use Mike42\Escpos\PrintConnectors\CupsPrintConnector;
+use Mike42\Escpos\PrintConnectors\FilePrintConnector;
+use Mike42\Escpos\Printer;
+
 class Order extends AbstractModel
 {
     protected $fillable = [
@@ -51,5 +57,63 @@ class Order extends AbstractModel
         }
 
         return $q;
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function print()
+    {
+        $maxChar = 32;
+        $createdAt = $this->created_at;
+        $createdAt = $createdAt->format('d/m/Y H:m:s');
+
+        $connector = new CupsPrintConnector("printer");
+        $profile = CapabilityProfile::load("default");
+        $printer = new Printer($connector, $profile);
+
+        $tux = EscposImage::load(base_path("resources/frontend/src/assets/img/logo-print.png"), true);
+
+        $printer->bitImage($tux);
+
+        $printer->setJustification(Printer::JUSTIFY_CENTER);
+        $printer->selectPrintMode(Printer::MODE_EMPHASIZED);
+        $printer->text("Mesa: {$this->table}\n");
+        $printer->selectPrintMode();
+        $printer->setJustification(Printer::JUSTIFY_LEFT);
+        $printer->feed();
+
+        $printOrderItem = function (OrderItem $orderItem, Printer $printer, $subItem = false) use ($maxChar) {
+            $item = $orderItem->item->description;
+
+            $qty = str_pad($orderItem->quantity . 'x', 3, ' ', STR_PAD_RIGHT);
+            $obs = substr($orderItem->observation, 0, $maxChar);
+            $qty = $subItem ? ' - ' . $qty : $qty;
+
+            $printer->text("${qty}  ${item}\n");
+
+            if (!$subItem && !empty($obs)) {
+                $printer->text("Obs: ${obs}\n");
+            }
+        };
+
+        $this->orderItems()->get()->each(function (OrderItem $orderItem) use ($printOrderItem, $printer, $maxChar) {
+            $printOrderItem($orderItem, $printer);
+            $orderItem->children()->each(function (OrderItem $orderItem) use ($printOrderItem, $printer) {
+                $printOrderItem($orderItem, $printer, true);
+            });
+
+            $printer->selectPrintMode(Printer::MODE_EMPHASIZED);
+            $printer->text(str_pad('', $maxChar, '-'));
+            $printer->selectPrintMode();
+
+//            $printer->feed();
+        });
+
+        $printer->feed();
+        $printer->text("Abertura: {$createdAt}\n");
+        $printer->feed(2);
+        $printer->cut();
+        $printer->close();
     }
 }

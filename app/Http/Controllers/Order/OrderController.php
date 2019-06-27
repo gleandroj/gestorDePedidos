@@ -50,7 +50,6 @@ class OrderController extends Controller
         };
     }
 
-
     /**
      * Display the specified resource.
      *
@@ -109,6 +108,21 @@ class OrderController extends Controller
         $order->orderItems()->delete();
         return [
             'success' => boolval($order->delete())
+        ];
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param Order $order
+     * @return array
+     * @throws \Exception
+     */
+    public function print(Order $order)
+    {
+        $order->print();
+        return [
+            'success' => true
         ];
     }
 }
