@@ -66,15 +66,10 @@ class Order extends AbstractModel
      */
     public function orderItemsToPrint($itemsAllowed = [])
     {
-        $q = $this->orderItems()
-            ->whereNull('parent_id')
-            ->whereNull('finalized_at');
+        $q = $this->orderItems()->whereNull('finalized_at');
 
         if (count($itemsAllowed) > 0) {
-            $q = $q->orWhere(function ($q) use ($itemsAllowed) {
-                $q->orWhereIn('id', $itemsAllowed)
-                    ->whereNull('parent_id');
-            });
+            $q->whereIn('id', $itemsAllowed);
         }
 
         return $q->get();
@@ -96,11 +91,13 @@ class Order extends AbstractModel
         $maxItemChar = $withPrice ? $maxItemChar : $maxItemChar + $priceChar + 3;
 
         $font = Printer::FONT_A;
+
         $orderItems = $this->orderItemsToPrint($itemsAllowed);
 
         $total = $orderItems->reduce(function ($total, OrderItem $orderItem) {
-            return $total += $orderItem->computedPrice();
+            return $total += $orderItem->price - $orderItem->discount;
         }, 0);
+
         $total = number_format($total, 2, ',', '.');
         $total = str_pad($total, ($maxChar - 9), ' ', STR_PAD_LEFT) . 'R$';
 
@@ -160,11 +157,31 @@ class Order extends AbstractModel
                 }
             };
 
-            $orderItems->each(function (OrderItem $orderItem) use ($printOrderItem, $printer, $maxChar, $itemsAllowed) {
+            $printered = [];
+
+            $orderItems->filter(function($orderItem){
+                return empty($orderItem->parent_id);
+            })->each(function (OrderItem $orderItem) use ($printOrderItem, &$printered, $orderItems, $printer, $maxChar) {
+                $printered[] = $orderItem->id;
+
                 $printOrderItem($orderItem, $printer);
-                $orderItem->childrenToPrint($itemsAllowed)->each(function (OrderItem $orderItem) use ($printOrderItem, $printer) {
-                    $printOrderItem($orderItem, $printer, true);
+
+                $orderItems->each(function($subItem) use($printOrderItem, &$printered, $printer, $orderItem){
+                    if($subItem->parent_id == $orderItem->id){
+                        $printered[] = $subItem->id;
+                        $printOrderItem($subItem, $printer, true);
+                    }
                 });
+
+                $createdAt = $orderItem->created_at->format('d/m/Y H:i:s');
+                $createdAt = str_pad($createdAt, $maxChar - 6, ' ', STR_PAD_LEFT);
+                $printer->feed();
+                $printer->text("Hora: {$createdAt}\n");
+                $printer->text(str_pad('', $maxChar, '.'));
+            });
+
+            $orderItems->whereNotIn('id', $printered)->each(function($orderItem) use($printOrderItem, &$printered, $orderItems, $printer, $maxChar){
+                $printOrderItem($orderItem, $printer);
                 $createdAt = $orderItem->created_at->format('d/m/Y H:i:s');
                 $createdAt = str_pad($createdAt, $maxChar - 6, ' ', STR_PAD_LEFT);
                 $printer->feed();
