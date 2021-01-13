@@ -23,14 +23,15 @@ Route::group(['prefix' => '/auth'], function () {
     Route::post('password/reset', 'Auth\ResetPasswordController@reset');
 });
 
+
 /**
  * Auth API
  */
-Route::post('report/items', 'Report\ReportController@paginate');
+
 Route::middleware(['auth:api'])->group(function () {
     Route::pattern('user', '[0-9]+');
     Route::apiResource('users', 'User\UserController', ['except' => ['destroy']]);
-
+    Route::post('report/items', 'Report\ReportController@paginate');
     Route::pattern('item', '[0-9]+');
     Route::apiResource('items', 'Item\ItemController');
     Route::get('items/all', 'Item\ItemController@all');
