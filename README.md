@@ -4,6 +4,11 @@ Simples projeto para gestão de mesas e cardápio e pedidos para pequenos comerc
 com integração a impressora não fiscal
 
 ## Demo and Prints
+Demo powered by Heroku
+[Online Demo](https://bufallus.herokuapp.com)
+User: admin@bufallus.com.br
+Pass: secret
+
 Todo..
 
 ## Impressora Suportada
